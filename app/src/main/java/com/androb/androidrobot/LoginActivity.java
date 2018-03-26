@@ -18,7 +18,7 @@ import butterknife.BindView;
 
 
 /**
- * Created by kaki on 2017/03/17.
+ * Created by kaki on 2018/03/17.
  */
 
 public class LoginActivity extends AppCompatActivity {
@@ -110,7 +110,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
-        // disable going back to the MainActivity
+        // disable going back to the DragActivity
         moveTaskToBack(true);
     }
 

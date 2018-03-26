@@ -2,4 +2,10 @@
     <string name="app_name">AndroidRobot</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+
+    <!--College Student-->
+    <string name="college_app_name">For College Students</string>
+    <string name="college_mode_programming">Programming Mode</string>
+    <string name="college_mode_drag">Drag Mode</string>
+
 </resources>
