@@ -5,7 +5,8 @@
 
     <!--College Student-->
     <string name="college_app_name">For College Students</string>
-    <string name="college_mode_programming">Programming Mode</string>
-    <string name="college_mode_drag">Drag Mode</string>
+    <string name="college_mode_code">编程模式</string>
+    <string name="college_mode_graph">流程图模式</string>
+    <string name="college_mode_drag">拖拽模式</string>
 
 </resources>

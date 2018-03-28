@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="time">
+        <item>1s </item>
+        <item>2s </item>
+        <item>3s </item>
+        <item>4s </item>
+    </string-array>
+
+    <string-array name="city_labels">
+        <item>北京 </item>
+        <item>上海 </item>
+        <item>广州 </item>
+        <item>深圳 </item>
+    </string-array>
+
+</resources>

@@ -6,7 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
-import com.androb.androidrobot.dragAndDrop.DragActivity;
+import com.androb.androidrobot.dragMode.DragModeStartActivity;
+import com.androb.androidrobot.graphMode.GraphModeStartActivity;
+import com.androb.androidrobot.codeMode.CodeModeStartActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -17,8 +19,10 @@ import butterknife.ButterKnife;
 
 public class CollegeStuMainActivity extends AppCompatActivity {
 
-    @BindView(R.id.progMode_btn)
-    Button _progModeButton;
+    @BindView(R.id.codeMode_btn)
+    Button _codeModeButton;
+    @BindView(R.id.graphMode_btn)
+    Button _graphModeButton;
     @BindView(R.id.dragMode_btn)
     Button _dragModeButton;
 
@@ -32,7 +36,21 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         _dragModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DragActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+                startActivity(intent);
+            }
+        });
+        _graphModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), GraphModeStartActivity.class);
+                startActivity(intent);
+            }
+        });
+        _codeModeButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), CodeModeStartActivity.class);
                 startActivity(intent);
             }
         });
