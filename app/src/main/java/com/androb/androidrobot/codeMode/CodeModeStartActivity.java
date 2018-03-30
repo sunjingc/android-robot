@@ -26,7 +26,6 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
     private static final int QUES_1 = 1;
     private static final int QUES_2 = 2;
 
-    private int requestCode;
     private Intent mIntent;
 
 
@@ -41,22 +40,6 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
         _codeQues1.setOnClickListener(this);
         _codeQues2.setOnClickListener(this);
 
-//        _codeQues1.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), CodeModeQuestionActivity.class);
-//                startActivityForResult(intent, QUES_1);
-//            }
-//        });
-//
-//        _codeQues2.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), CodeModeQuestionActivity.class);
-//                startActivityForResult(intent, QUES_2);
-//            }
-//        });
-
         System.out.println("in CodeMode onCreate");
 
     }
@@ -66,29 +49,13 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
         switch (v.getId()) {
             case R.id.code_ques_1:
                 // 请求码的值随便设置，但必须>=0
-                requestCode = 1;
-                startActivityForResult(mIntent, requestCode);
+                mIntent.putExtra("btn_id", "1");
+                System.out.println("clicked 1 in Start");
+                startActivity(mIntent);
                 break;
             case R.id.code_ques_2:
-                requestCode = 2;
-                startActivityForResult(mIntent, requestCode);
-                break;
-            default:
-                break;
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String change01 = data.getStringExtra("change01");
-        String change02 = data.getStringExtra("change02");
-        // 根据上面发送过去的请求吗来区别
-        switch (requestCode) {
-            case 1:
-                _codeQues1.setText(change01);
-                break;
-            case 2:
-                _codeQues2.setText(change02);
+                mIntent.putExtra("btn_id", "2");
+                startActivity(mIntent);
                 break;
             default:
                 break;

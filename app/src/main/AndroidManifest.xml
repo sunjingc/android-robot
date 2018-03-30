@@ -21,17 +21,7 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity android:name=".codeMode.CodeModeStartActivity"
-            android:screenOrientation="landscape"
-            android:configChanges="keyboardHidden|orientation|screenSize">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-        </activity>
-
-        <!--<activity android:name=".CollegeStuMainActivity"-->
+        <!--<activity android:name=".codeMode.CodeModeStartActivity"-->
             <!--android:screenOrientation="landscape"-->
             <!--android:configChanges="keyboardHidden|orientation|screenSize">-->
             <!--<intent-filter>-->
@@ -41,13 +31,28 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity android:name=".RegisterActivity" />
-        <activity android:name=".CollegeStuMainActivity" />
+        <activity android:name=".CollegeStuMainActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="keyboardHidden|orientation|screenSize">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-        <activity android:name=".codeMode.CodeModeQuestionActivity" />
-        <!--<activity android:name=".codeMode.CodeModeStartActivity" />-->
-        <activity android:name=".graphMode.GraphModeStartActivity" />
-        <activity android:name=".dragMode.DragModeStartActivity" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+
+        <activity android:name=".RegisterActivity" />
+        <!--<activity android:name=".CollegeStuMainActivity" />-->
+
+        <activity android:name=".codeMode.CodeModeQuestionActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".codeMode.CodeModeStartActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".graphMode.GraphModeStartActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".dragMode.DragModeStartActivity"
+            android:screenOrientation="landscape"/>
 
         <!--<activity android:name=".dragAndDrop.DragActivity" />-->
 

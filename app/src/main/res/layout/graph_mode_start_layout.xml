@@ -11,7 +11,7 @@
         android:textSize="18sp"
         android:layout_marginTop="30dp"
         android:layout_gravity="center"
-        android:text="编程模式 - 题目列表" />
+        android:text="流程图模式 - 题目列表" />
 
     <GridLayout
         android:layout_width="wrap_content"
@@ -22,15 +22,15 @@
         android:layout_gravity="center">
 
         <Button
-            android:id="@+id/code_ques_1"
+            android:id="@+id/graph_ques_1"
             android:text="1" />
 
         <Button
-            android:id="@+id/code_ques_2"
+            android:id="@+id/graph_ques_2"
             android:text="2" />
 
         <Button
-            android:id="@+id/code_ques_3"
+            android:id="@+id/graph_ques_3"
             android:text="3" />
 
         <Button android:text="4" />
