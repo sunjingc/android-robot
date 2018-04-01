@@ -9,10 +9,6 @@ import android.view.MotionEvent;
 import android.widget.TextView;
 
 /**
- * Created by kaki on 2018/03/22.
- */
-
-/**
  * 触摸事件
  * Created by yangle on 2017/10/9.
  */
@@ -47,5 +43,4 @@ public class TouchLinkMovementMethod extends LinkMovementMethod {
 
         return super.onTouchEvent(widget, buffer, event);
     }
-
 }

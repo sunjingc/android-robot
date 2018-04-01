@@ -23,9 +23,6 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
     @BindView(R.id.code_ques_2)
     Button _codeQues2;
 
-    private static final int QUES_1 = 1;
-    private static final int QUES_2 = 2;
-
     private Intent mIntent;
 
 

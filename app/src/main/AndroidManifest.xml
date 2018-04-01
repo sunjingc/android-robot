@@ -21,7 +21,7 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <!--<activity android:name=".codeMode.CodeModeStartActivity"-->
+        <!--<activity android:name=".dragMode.DragModeQuestionActivity"-->
             <!--android:screenOrientation="landscape"-->
             <!--android:configChanges="keyboardHidden|orientation|screenSize">-->
             <!--<intent-filter>-->
@@ -44,9 +44,6 @@
         <activity android:name=".RegisterActivity" />
         <!--<activity android:name=".CollegeStuMainActivity" />-->
 
-        <activity android:name=".codeMode.CodeModeQuestionActivity"
-            android:screenOrientation="portrait"/>
-
         <activity android:name=".codeMode.CodeModeStartActivity"
             android:screenOrientation="landscape"/>
         <activity android:name=".graphMode.GraphModeStartActivity"
@@ -54,7 +51,20 @@
         <activity android:name=".dragMode.DragModeStartActivity"
             android:screenOrientation="landscape"/>
 
+
+        <activity android:name=".codeMode.CodeModeQuestionActivity"
+            android:screenOrientation="portrait"/>
+
+        <activity android:name=".graphMode.GraphModeQuestionActivity"
+            android:screenOrientation="landscape"/>
+
+        <!--<activity android:name=".dragMode.DragModeQuestionActivity"-->
+            <!--android:screenOrientation="landscape"/>-->
+
         <!--<activity android:name=".dragAndDrop.DragActivity" />-->
+
+        <activity android:name=".dragAndDrop.DragTestActivity"
+            android:screenOrientation="portrait"/>
 
     </application>
 

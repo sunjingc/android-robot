@@ -31,19 +31,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by kaki on 2018/03/22.
- */
-
-/**
  * 拖拽填空题
  * Created by yangle on 2017/10/9.
  */
 
 public class DragFillBlankView extends RelativeLayout implements View.OnDragListener,
-        View.OnLongClickListener {
+        View.OnLongClickListener, View.OnClickListener {
 
+    private TextView tvQuestion;
     private TextView tvContent;
     private LinearLayout llOption;
+    private LinearLayout carOption;
+    private LinearLayout numOption;
+
+    //题干
+    private String questionText;
     // 初始数据
     private String originContent;
     // 初始答案范围集合
@@ -52,6 +54,30 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
     private SpannableStringBuilder content;
     // 选项列表
     private List<String> optionList;
+
+
+
+    // new
+    // 小车控制列表
+    private List<String> carOptionList;
+    // 小车答案范围集合
+    private List<AnswerRange> carAnswerRangeList;
+    // 小车答案集合
+    private List<String> carAnswerList;
+    // 小车选项位置
+    private int carOptionPosition;
+
+    // new
+    // 数值列表
+    private List<String> numOptionList;
+    // 数值答案范围集合
+    private List<AnswerRange> numAnswerRangeList;
+    // 数值答案集合
+    private List<String> numAnswerList;
+    // 数值选项位置
+    private int numOptionPosition;
+
+
     // 答案范围集合
     private List<AnswerRange> answerRangeList;
     // 答案集合
@@ -75,29 +101,36 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
     }
 
     private void initView() {
-
         LayoutInflater inflater = LayoutInflater.from(getContext());
         inflater.inflate(R.layout.layout_drag_fill_blank, this);
 
+        tvQuestion = (TextView) findViewById(R.id.tv_question);
         tvContent = (TextView) findViewById(R.id.tv_content);
         llOption = (LinearLayout) findViewById(R.id.ll_option);
+
+        carOption = (LinearLayout) findViewById(R.id.car_control_option);
+        numOption = (LinearLayout) findViewById(R.id.number_option);
     }
 
     /**
      * 设置数据
      *
+     * @param questionText    题干
      * @param originContent   源数据
      * @param optionList      选项列表
      * @param answerRangeList 答案范围集合
      */
-    public void setData(String originContent, List<String> optionList, List<AnswerRange> answerRangeList) {
+    public void setData(String questionText, String originContent, List<String> optionList, List<AnswerRange> answerRangeList,
+                        List<String> carOptionList,
+                        List<String> numOptionList) {
 
-        System.out.println("in setData");
-
+        // TODO: 还没改car和num
         if (TextUtils.isEmpty(originContent) || optionList == null || optionList.isEmpty()
                 || answerRangeList == null || answerRangeList.isEmpty()) {
             return;
         }
+
+        this.questionText = questionText;
 
         // 初始数据
         this.originContent = originContent;
@@ -108,11 +141,18 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
         this.content = new SpannableStringBuilder(originContent);
         // 选项列表
         this.optionList = optionList;
+
+        this.carOptionList = carOptionList;
+        this.numOptionList = numOptionList;
+
+
         // 答案范围集合
         this.answerRangeList = answerRangeList;
+//        this.carAnswerRangeList = carAnswerRangeList;
+//        this.numAnswerRangeList = numAnswerRangeList;
 
         // 避免重复创建拖拽选项
-        if (llOption.getChildCount() < 1) {
+        if (llOption.getChildCount() < 1 ) {
             // 拖拽选项列表
             List<Button> itemList = new ArrayList<>();
             for (String option : optionList) {
@@ -121,8 +161,7 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
                         ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
                 params.setMargins(0, 0, dp2px(10), 0);
                 btnAnswer.setLayoutParams(params);
-//                btnAnswer.setBackgroundColor(Color.parseColor("#4DB6AC"));
-                btnAnswer.setBackgroundColor(Color.parseColor("#e67300"));
+                btnAnswer.setBackgroundColor(Color.parseColor("#99CC99"));
                 btnAnswer.setTextColor(Color.WHITE);
                 btnAnswer.setText(option);
                 btnAnswer.setOnLongClickListener(this);
@@ -133,25 +172,89 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
             for (int i = 0; i < itemList.size(); i++) {
                 llOption.addView(itemList.get(i));
             }
+
+
+            // carOption
+            List<Button> carItemList = new ArrayList<>();
+            for (String option : carOptionList) {
+                Button carBtnAnswer = new Button(getContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(0, 0, dp2px(10), 0);
+                carBtnAnswer.setLayoutParams(params);
+                carBtnAnswer.setBackgroundColor(Color.parseColor("#669933"));
+                carBtnAnswer.setTextColor(Color.WHITE);
+                carBtnAnswer.setText(option);
+                carBtnAnswer.setOnLongClickListener(this);
+                carItemList.add(carBtnAnswer);
+            }
+
+            // 显示拖拽选项
+            for (int i = 0; i < carItemList.size(); i++) {
+                carOption.addView(carItemList.get(i));
+            }
+
+
+            // numOption
+            List<Button> numItemList = new ArrayList<>();
+            for (String option : numOptionList) {
+                Button btnAnswer = new Button(getContext());
+                LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                        ViewGroup.LayoutParams.WRAP_CONTENT, ViewGroup.LayoutParams.WRAP_CONTENT);
+                params.setMargins(0, 0, dp2px(10), 0);
+                btnAnswer.setLayoutParams(params);
+                btnAnswer.setBackgroundColor(Color.parseColor("#336633"));
+                btnAnswer.setTextColor(Color.WHITE);
+                btnAnswer.setText(option);
+                btnAnswer.setOnLongClickListener(this);
+                numItemList.add(btnAnswer);
+            }
+
+            // 显示拖拽选项
+            for (int i = 0; i < numItemList.size(); i++) {
+                numOption.addView(numItemList.get(i));
+            }
+
+
+
         } else {
             // 不显示已经填空的选项
-            for (int i = 0; i < llOption.getChildCount(); i++) {
-                Button button = (Button) llOption.getChildAt(i);
-                String option = button.getText().toString();
-                if (!answerList.isEmpty() && answerList.contains(option)) {
-                    button.setVisibility(INVISIBLE);
-                } else {
-                    button.setVisibility(VISIBLE);
-                }
-            }
+//            for (int i = 0; i < llOption.getChildCount(); i++) {
+//                Button button = (Button) llOption.getChildAt(i);
+//                String option = button.getText().toString();
+//                if (!answerList.isEmpty() && answerList.contains(option)) {
+//                    button.setVisibility(INVISIBLE);
+//                } else {
+//                    button.setVisibility(VISIBLE);
+//                }
+//            }
+
+            // 不显示已经填空的car选项
+//            for (int i = 0; i < carOption.getChildCount(); i++) {
+//                Button button = (Button) carOption.getChildAt(i);
+//                String option = button.getText().toString();
+//                if (!answerList.isEmpty() && answerList.contains(option)) {
+//                    button.setVisibility(INVISIBLE);
+//                } else {
+//                    button.setVisibility(VISIBLE);
+//                }
+//            }
+
+            // 不显示已经填空的num选项
+//            for (int i = 0; i < numOption.getChildCount(); i++) {
+//                Button button = (Button) numOption.getChildAt(i);
+//                String option = button.getText().toString();
+//                if (!answerList.isEmpty() && answerList.contains(option)) {
+//                    button.setVisibility(INVISIBLE);
+//                } else {
+//                    button.setVisibility(VISIBLE);
+//                }
+//            }
         }
 
         // 设置下划线颜色
         for (AnswerRange range : this.answerRangeList) {
-
-            System.out.println("range start here: " + range.start + ", end: " + range.end);
-
-            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#e67300"));
+            ForegroundColorSpan colorSpan = new ForegroundColorSpan(Color.parseColor("#4DB6AC"));
             content.setSpan(colorSpan, range.start, range.end, Spanned.SPAN_EXCLUSIVE_EXCLUSIVE);
         }
 
@@ -172,6 +275,8 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
         tvContent.setMovementMethod(new TouchLinkMovementMethod());
         tvContent.setText(content);
         tvContent.setOnDragListener(this);
+
+        tvQuestion.setText(questionText);
     }
 
     /**
@@ -181,7 +286,7 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
      */
     public void updateAnswer(List<String> answerList) {
         // 重新初始化数据
-        setData(originContent, optionList, originAnswerRangeList);
+        setData(questionText, originContent, optionList, originAnswerRangeList, carOptionList, numOptionList);
 
         // 重新填写已经存在的答案
         if (answerList != null && !answerList.isEmpty()) {
@@ -193,6 +298,7 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
             }
         }
     }
+
 
     @Override
     public boolean onLongClick(View v) {
@@ -365,6 +471,12 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
                 answerRangeList.set(i, nextRange);
             }
         }
+    }
+
+    @Override
+    public void onClick(View view) {
+
+
     }
 
     /**

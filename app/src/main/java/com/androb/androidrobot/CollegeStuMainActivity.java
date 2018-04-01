@@ -6,6 +6,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.androb.androidrobot.dragAndDrop.DragTestActivity;
+
+
 import com.androb.androidrobot.dragMode.DragModeStartActivity;
 import com.androb.androidrobot.graphMode.GraphModeStartActivity;
 import com.androb.androidrobot.codeMode.CodeModeStartActivity;
@@ -36,7 +39,8 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         _dragModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DragTestActivity.class);
                 startActivity(intent);
             }
         });

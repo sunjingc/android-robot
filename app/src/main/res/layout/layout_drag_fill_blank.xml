@@ -4,17 +4,28 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp">
+
+        <TextView
+            android:id="@+id/tv_question"
+            android:layout_width="wrap_content"
+            android:layout_height="50dp"
+            android:lineSpacingExtra="5dp"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_weight="1"
-        android:scrollbars="none">
+        android:layout_height="250dp">
 
         <TextView
             android:id="@+id/tv_content"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:lineSpacingExtra="5dp"
+            android:lineSpacingExtra="1.5dp"
             android:textSize="18sp" />
 
     </ScrollView>
@@ -26,6 +37,34 @@
 
         <LinearLayout
             android:id="@+id/ll_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/car_control_option"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" />
+
+    </HorizontalScrollView>
+
+    <HorizontalScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:scrollbars="none">
+
+        <LinearLayout
+            android:id="@+id/number_option"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:orientation="horizontal" />
