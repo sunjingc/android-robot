@@ -35,6 +35,8 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     private int questionId = 0;
     private String mTestStr;
 
+    private String answerString;
+
     private SpansManager mSpansManager;
 
 
@@ -51,6 +53,12 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         questionId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
         System.out.println("Question ID: " + questionId);
+
+
+
+        submitButton.setOnClickListener(this);
+
+
 
         switch (questionId) {
             case 1:
@@ -75,8 +83,13 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.code_ques_submit_btn:
-                System.out.println("clicked submit");   // wrong here, no repsonse
+                System.out.println("clicked submit");
+
+                // 检查输入格式？还是不在这里做？？
+
                 Toast.makeText(this, getMyAnswerStr(), Toast.LENGTH_LONG).show();
+                answerString = getMyAnswerStr();
+                System.out.println("answer string: " + answerString);
                 break;
         }
     }
@@ -98,7 +111,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     }
 
     private String getMyAnswerStr(){
-        System.out.println("in GetMYAnswerStr");
+//        System.out.println("in GetMYAnswerStr");
         mSpansManager.setLastCheckedSpanText(etInput.getText().toString());
         return mSpansManager.getMyAnswer().toString();
     }

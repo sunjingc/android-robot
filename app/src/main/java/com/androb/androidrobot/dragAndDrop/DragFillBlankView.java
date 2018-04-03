@@ -36,7 +36,7 @@ import java.util.List;
  */
 
 public class DragFillBlankView extends RelativeLayout implements View.OnDragListener,
-        View.OnLongClickListener, View.OnClickListener {
+        View.OnLongClickListener {
 
     private TextView tvQuestion;
     private TextView tvContent;
@@ -172,9 +172,11 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
             for (int i = 0; i < itemList.size(); i++) {
                 llOption.addView(itemList.get(i));
             }
+        }
 
 
-            // carOption
+        // carOption
+        if (carOption.getChildCount() < 1 ) {
             List<Button> carItemList = new ArrayList<>();
             for (String option : carOptionList) {
                 Button carBtnAnswer = new Button(getContext());
@@ -193,9 +195,11 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
             for (int i = 0; i < carItemList.size(); i++) {
                 carOption.addView(carItemList.get(i));
             }
+        }
 
 
-            // numOption
+        // numOption
+        if (numOption.getChildCount() < 1 ) {
             List<Button> numItemList = new ArrayList<>();
             for (String option : numOptionList) {
                 Button btnAnswer = new Button(getContext());
@@ -214,10 +218,10 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
             for (int i = 0; i < numItemList.size(); i++) {
                 numOption.addView(numItemList.get(i));
             }
+        }
 
 
-
-        } else {
+//        } else {
             // 不显示已经填空的选项
 //            for (int i = 0; i < llOption.getChildCount(); i++) {
 //                Button button = (Button) llOption.getChildAt(i);
@@ -250,7 +254,7 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
 //                    button.setVisibility(VISIBLE);
 //                }
 //            }
-        }
+//        }
 
         // 设置下划线颜色
         for (AnswerRange range : this.answerRangeList) {
@@ -316,7 +320,18 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
         // 选项内容
         String optionContent = ((Button) v).getText().toString();
         // 记录当前答案选项的位置
-        optionPosition = getOptionPosition(optionContent);
+
+        if (optionList.contains(optionContent)) {
+            optionPosition = getOptionPosition(optionContent, 0);
+        }
+        else if (carOptionList.contains(optionContent)) {
+            optionPosition = getOptionPosition(optionContent, 1);
+        }
+        else if (numOptionList.contains(optionContent)) {
+            optionPosition = getOptionPosition(optionContent, 2);
+        }
+
+
         // 开始拖拽后在列表中隐藏答案选项
         v.setVisibility(INVISIBLE);
 
@@ -407,7 +422,20 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
                 // 重复拖拽，在答案列表中显示原答案
                 String oldAnswer = answerList.get(position);
                 if (!TextUtils.isEmpty(oldAnswer)) {
-                    llOption.getChildAt(getOptionPosition(oldAnswer)).setVisibility(VISIBLE);
+
+                    // TODO: not really working??
+                    // 判断是哪一行的答案
+                    if (optionList.contains(oldAnswer)) {
+                        llOption.getChildAt(getOptionPosition(oldAnswer, 0)).setVisibility(VISIBLE);
+                    }
+                    else if (carOptionList.contains(oldAnswer)) {
+                        carOption.getChildAt(getOptionPosition(oldAnswer, 1)).setVisibility(VISIBLE);
+                    }
+                    else if (numOptionList.contains(oldAnswer)) {
+                        numOption.getChildAt(getOptionPosition(oldAnswer, 2)).setVisibility(VISIBLE);
+                    }
+
+//                    llOption.getChildAt(getOptionPosition(oldAnswer)).setVisibility(VISIBLE);
                 }
 
                 // 填写答案
@@ -473,11 +501,6 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
         }
     }
 
-    @Override
-    public void onClick(View view) {
-
-
-    }
 
     /**
      * 触摸事件
@@ -492,13 +515,16 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
 
         @Override
         public void onClick(final View widget) {
+
+            System.out.println("onClick(final View widget)");
+
             // 显示原有答案
             String oldAnswer = answerList.get(position);
-            if (!TextUtils.isEmpty(oldAnswer)) {
-                answerList.set(position, "");
-                updateAnswer(answerList);
-                startDrag(llOption.getChildAt(getOptionPosition(oldAnswer)));
-            }
+//            if (!TextUtils.isEmpty(oldAnswer)) {
+//                answerList.set(position, "");
+//                updateAnswer(answerList);
+//                startDrag(llOption.getChildAt(getOptionPosition(oldAnswer)));
+//            }
         }
 
         @Override
@@ -512,15 +538,36 @@ public class DragFillBlankView extends RelativeLayout implements View.OnDragList
      * 获取选项位置
      *
      * @param option 选项内容
+     * @param type   筛选类型
      * @return 选项位置
      */
-    private int getOptionPosition(String option) {
-        for (int i = 0; i < llOption.getChildCount(); i++) {
-            Button btnOption = (Button) llOption.getChildAt(i);
-            if (btnOption.getText().toString().equals(option)) {
-                return i;
-            }
+    private int getOptionPosition(String option, int type) {
+
+        switch(type) {
+
+            case 0:
+                for (int i = 0; i < llOption.getChildCount(); i++) {
+                    Button btnOption = (Button) llOption.getChildAt(i);
+                    if (btnOption.getText().toString().equals(option)) {
+                        return i;
+                    }
+                }
+            case 1:
+                for (int i = 0; i < carOption.getChildCount(); i++) {
+                    Button btnOption = (Button) carOption.getChildAt(i);
+                    if (btnOption.getText().toString().equals(option)) {
+                        return i;
+                    }
+                }
+            case 2:
+                for (int i = 0; i < numOption.getChildCount(); i++) {
+                    Button btnOption = (Button) numOption.getChildAt(i);
+                    if (btnOption.getText().toString().equals(option)) {
+                        return i;
+                    }
+                }
         }
+
         return 0;
     }
 
