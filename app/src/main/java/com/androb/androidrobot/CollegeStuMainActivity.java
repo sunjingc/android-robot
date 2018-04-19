@@ -6,6 +6,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
 
+import com.androb.androidrobot.connectionUtil.BluetoothDiscoverActivity;
 import com.androb.androidrobot.dragAndDrop.DragTestActivity;
 
 
@@ -28,6 +29,8 @@ public class CollegeStuMainActivity extends AppCompatActivity {
     Button _graphModeButton;
     @BindView(R.id.dragMode_btn)
     Button _dragModeButton;
+    @BindView(R.id.bluetooth_btn)
+    Button _bluetoothButton;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -55,6 +58,14 @@ public class CollegeStuMainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 Intent intent = new Intent(getApplicationContext(), CodeModeStartActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        _bluetoothButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), BluetoothDiscoverActivity.class);
                 startActivity(intent);
             }
         });

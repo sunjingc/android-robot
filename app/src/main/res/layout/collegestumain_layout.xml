@@ -15,11 +15,11 @@
         android:paddingRight="24dp">
 
         <Button
-            android:id="@+id/codeMode_btn"
+            android:id="@+id/dragMode_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/college_mode_code" />
+            android:text="@string/college_mode_drag" />
 
         <Button
             android:id="@+id/graphMode_btn"
@@ -29,11 +29,29 @@
             android:text="@string/college_mode_graph" />
 
         <Button
-            android:id="@+id/dragMode_btn"
+            android:id="@+id/codeMode_btn"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_weight="1"
-            android:text="@string/college_mode_drag" />
+            android:text="@string/college_mode_code" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="horizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="80dp"
+        android:paddingLeft="24dp"
+        android:paddingRight="24dp">
+
+        <Button
+            android:id="@+id/bluetooth_btn"
+            android:layout_width="100dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/bluetooth_setting" />
 
     </LinearLayout>
 
