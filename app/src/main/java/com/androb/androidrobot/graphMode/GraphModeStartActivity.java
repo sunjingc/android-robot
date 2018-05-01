@@ -7,7 +7,6 @@ import android.view.View;
 import android.widget.Button;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.codeMode.CodeModeQuestionActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -22,6 +21,10 @@ public class GraphModeStartActivity extends AppCompatActivity implements View.On
     Button _graphQues1;
     @BindView(R.id.graph_ques_2)
     Button _graphQues2;
+    @BindView(R.id.graph_ques_3)
+    Button _graphQues3;
+    @BindView(R.id.graph_ques_4)
+    Button _graphQues4;
 
     private Intent mIntent;
 
@@ -35,6 +38,8 @@ public class GraphModeStartActivity extends AppCompatActivity implements View.On
 
         _graphQues1.setOnClickListener(this);
         _graphQues2.setOnClickListener(this);
+        _graphQues3.setOnClickListener(this);
+        _graphQues4.setOnClickListener(this);
 
     }
 
@@ -49,6 +54,14 @@ public class GraphModeStartActivity extends AppCompatActivity implements View.On
                 break;
             case R.id.graph_ques_2:
                 mIntent.putExtra("btn_id", "2");
+                startActivity(mIntent);
+                break;
+            case R.id.graph_ques_3:
+                mIntent.putExtra("btn_id", "3");
+                startActivity(mIntent);
+                break;
+            case R.id.graph_ques_4:
+                mIntent.putExtra("btn_id", "4");
                 startActivity(mIntent);
                 break;
             default:

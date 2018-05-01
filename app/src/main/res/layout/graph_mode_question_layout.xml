@@ -1,9 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:orientation="vertical"
+    android:orientation="horizontal"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:textColor="@color/white">
 
     <TextView
         android:id="@+id/graph_question_text"
@@ -14,46 +15,118 @@
         android:layout_marginLeft="20dp"
         android:text="Graph题目here："/>
 
-    <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_marginTop="55dp"
-        android:layout_marginLeft="85dp"
-        android:layout_width="fill_parent"
-        android:layout_height="fill_parent">
+    <ScrollView
+        android:layout_width="190dp"
+        android:layout_height="250dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="3dp"
+        android:scrollbars="vertical"
+        android:fadingEdge="vertical">
 
-        <ImageView
-            android:id="@+id/graph_imageView"
-            android:layout_width="222dp"
-            android:layout_height="361dp"
-            app:srcCompat="@drawable/g1" />
+        <LinearLayout
+            android:layout_width="190dp"
+            android:layout_height="match_parent"
+            android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/graph_input_1_1"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:width="0dp" />
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:id="@+id/graph_btn_start"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_orange_500"
+                android:text="开始"
+                android:textColor="@color/white"/>
 
-        <EditText
-            android:id="@+id/graph_input_1_2"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:width="0dp" />
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:id="@+id/graph_btn_end"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_orange_500"
+                android:text="结束"
+                android:textColor="@color/white"/>
 
-        <EditText
-            android:id="@+id/graph_input_1_3"
-            android:layout_width="185dp"
-            android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:width="0dp" />
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:id="@+id/graph_btn_order"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="顺序"
+                android:textColor="@color/white"/>
 
-    </FrameLayout>
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:id="@+id/graph_btn_loop"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="循环"
+                android:textColor="@color/white"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="50dp"
+                android:id="@+id/graph_btn_if"
+                android:layout_marginTop="10dp"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="分支"
+                android:textColor="@color/white"/>
+
+        </LinearLayout>
+
+    </ScrollView>
+
+
+    <!--<ScrollView-->
+        <!--android:layout_width="190dp"-->
+        <!--android:layout_height="250dp"-->
+        <!--android:layout_marginTop="50dp"-->
+        <!--android:layout_marginLeft="3dp"-->
+        <!--android:scrollbars="vertical"-->
+        <!--android:fadingEdge="vertical">-->
+
+    <ScrollView
+        android:orientation="horizontal"
+        android:layout_width="385dp"
+        android:layout_height="190dp"
+        android:layout_marginLeft="200dp"
+        android:gravity="center"
+        android:layout_marginTop="50dp">
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/graph_area">
+        </RelativeLayout>
+
+    </ScrollView>
+
+    <!--</ScrollView>-->
+
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:layout_marginLeft="200dp"
         android:gravity="center"
-        android:layout_marginTop="400dp">
+        android:layout_marginTop="240dp">
+
+        <Button
+            android:id="@+id/graph_ques_cancel_btn"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="撤回上一步" />
 
         <Button
             android:id="@+id/graph_ques_submit_btn"

@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <item name="graph_start_img" type="id">graph_start_img</item>
+    <item name="graph_end_img" type="id">graph_end_img</item>
+    <item name="graph_order_img_1" type="id">graph_order_img_1</item>
+    <item name="graph_order_img_2" type="id">graph_order_img_2</item>
+    <item name="graph_order_img_3" type="id">graph_order_img_3</item>
+    <item name="graph_order_img_4" type="id">graph_order_img_4</item>
+    <item name="graph_order_img_5" type="id">graph_order_img_5</item>
+    <item name="graph_if_img" type="id">graph_if_img</item>
+    <item name="graph_loop_img" type="id">graph_loop_img</item>
+
+    <item name="graph_if_blank" type="id">graph_if_blank</item>
+    <item name="graph_order_blank_1" type="id">graph_order_blank_1</item>
+    <item name="graph_order_blank_2" type="id">graph_order_blank_2</item>
+    <item name="graph_order_blank_3" type="id">graph_order_blank_3</item>
+    <item name="graph_loop_blank" type="id">graph_loop_blank</item>
+</resources>

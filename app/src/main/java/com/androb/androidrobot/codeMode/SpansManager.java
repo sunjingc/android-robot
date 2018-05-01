@@ -126,41 +126,41 @@ public class SpansManager {
 
         public boolean onTouchEvent(TextView widget, Spannable buffer,
                                     MotionEvent event) {
-            int action = event.getAction();
+        int action = event.getAction();
 
-            if (action == MotionEvent.ACTION_UP ||
-                    action == MotionEvent.ACTION_DOWN) {
-                int x = (int) event.getX();
-                int y = (int) event.getY();
+        if (action == MotionEvent.ACTION_UP ||
+                action == MotionEvent.ACTION_DOWN) {
+            int x = (int) event.getX();
+            int y = (int) event.getY();
 
-                x -= widget.getTotalPaddingLeft();
-                y -= widget.getTotalPaddingTop();
+            x -= widget.getTotalPaddingLeft();
+            y -= widget.getTotalPaddingTop();
 
-                x += widget.getScrollX();
-                y += widget.getScrollY();
+            x += widget.getScrollX();
+            y += widget.getScrollY();
 
-                Layout layout = widget.getLayout();
-                int line = layout.getLineForVertical(y);
-                int off = layout.getOffsetForHorizontal(line, x);
+            Layout layout = widget.getLayout();
+            int line = layout.getLineForVertical(y);
+            int off = layout.getOffsetForHorizontal(line, x);
 
-                ReplaceSpan[] link = buffer.getSpans(off, off, ReplaceSpan.class);
+            ReplaceSpan[] link = buffer.getSpans(off, off, ReplaceSpan.class);
 
-                if (link.length != 0) {
-                    //Span的点击事件
-                    if (action == MotionEvent.ACTION_UP) {
-                        link[0].onClick(widget,buffer,false,x,y,line,off);
-                    } else if (action == MotionEvent.ACTION_DOWN) {
-                        link[0].onClick(widget,buffer,true,x,y,line,off);
+            if (link.length != 0) {
+                //Span的点击事件
+                if (action == MotionEvent.ACTION_UP) {
+                    link[0].onClick(widget,buffer,false,x,y,line,off);
+                } else if (action == MotionEvent.ACTION_DOWN) {
+                    link[0].onClick(widget,buffer,true,x,y,line,off);
 //                        Selection.setSelection(buffer,
 //                                buffer.getSpanStart(link[0]),
 //                                buffer.getSpanEnd(link[0]));
-                    }
-                    return true;
-                } else {
-//                    Selection.removeSelection(buffer);
                 }
+                return true;
+            } else {
+//                    Selection.removeSelection(buffer);
             }
-            return false;
+        }
+        return false;
         }
     };
 

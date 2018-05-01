@@ -19,6 +19,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,10 +33,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.messageUtil.MessageService;
 
 import butterknife.ButterKnife;
 
-public class BluetoothDiscoverActivity extends Activity implements OnItemClickListener {
+public class BluetoothDiscoverActivity extends Activity {
 
     // 获取到蓝牙适配器
     private BluetoothAdapter mBluetoothAdapter;
@@ -65,6 +67,14 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
     //用于记录用户选择的变量
     private int selectPosition = -1;
 
+    private String chosenResult;
+
+
+
+    private BluetoothConnection btConn;
+
+
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -80,15 +90,13 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
         }
 
 
-//        // 获取到ListView组件
-//        lvDevices = (ListView) findViewById(R.id.lvDevices);
-//        // 为listview设置字符换数组适配器
-//        arrayAdapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_list_item_1, android.R.id.text1,
-//                bluetoothDevices);
-//        // 为listView绑定适配器
-//        lvDevices.setAdapter(arrayAdapter);
-//        // 为listView设置item点击事件侦听
+        lvDevices = (ListView) findViewById(R.id.device_list);
+        // 为listview设置字符换数组适配器
+        arrayAdapter = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, android.R.id.text1,
+                bluetoothDevices);
+        // 为listView绑定适配器
+        lvDevices.setAdapter(arrayAdapter);
+        // 为listView设置item点击事件侦听
 //        lvDevices.setOnItemClickListener(this);
 
 
@@ -101,16 +109,13 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
                         + bluetoothDevice.getAddress() + "\n");
             }
         }
+
         // 因为蓝牙搜索到设备和完成搜索都是通过广播来告诉其他应用的
         // 这里注册找到设备和完成搜索广播
-        IntentFilter filter = new IntentFilter(
-                BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
+        IntentFilter filter = new IntentFilter(BluetoothAdapter.ACTION_DISCOVERY_FINISHED);
         registerReceiver(receiver, filter);
         filter = new IntentFilter(BluetoothDevice.ACTION_FOUND);
         registerReceiver(receiver, filter);
-
-
-
 
         deviceChoices = (ListView) findViewById(R.id.device_list);
 
@@ -122,22 +127,13 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
                 //获取选中的参数
                 selectPosition = position;
                 myAdapter.notifyDataSetChanged();
-                String chosenResult = bluetoothDevices.get(position);
-                Toast.makeText(BluetoothDiscoverActivity.this, "已经选择该设备", Toast.LENGTH_SHORT).show();
+                chosenResult = bluetoothDevices.get(position);
+                Toast.makeText(BluetoothDiscoverActivity.this, "已经选择该设备" + chosenResult, Toast.LENGTH_SHORT).show();
             }
         });
 
-
-
-
-
-
-
-        // 实例接收客户端传过来的数据线程
-        thread = new AcceptThread();
-        // 线程开始
-        thread.start();
     }
+
 
     public void onClick_Search(View view) {
         setTitle("正在扫描...");
@@ -148,38 +144,16 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
         mBluetoothAdapter.startDiscovery();
     }
 
-    // 注册广播接收者
-    private BroadcastReceiver receiver = new BroadcastReceiver() {
-        @Override
-        public void onReceive(Context arg0, Intent intent) {
-            // 获取到广播的action
-            String action = intent.getAction();
-            // 判断广播是搜索到设备还是搜索完成
-            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
-                // 找到设备后获取其设备
-                BluetoothDevice device = intent
-                        .getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
-                // 判断这个设备是否是之前已经绑定过了，如果是则不需要添加，在程序初始化的时候已经添加了
-                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
-                    // 设备没有绑定过，则将其保持到arrayList集合中
-                    bluetoothDevices.add(device.getName() + ":"
-                            + device.getAddress() + "\n");
-                    // 更新字符串数组适配器，将内容显示在listView中
-                    arrayAdapter.notifyDataSetChanged();
-                }
-            } else if (action
-                    .equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
-                setTitle("搜索完成");
-            }
-        }
-    };
 
-    // 点击listView中的设备，传送数据
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position,
-                            long id) {
+    public void onClick_ChooseDevice(View view) {
+
+        Intent btIntent = new Intent(this, BluetoothService.class);
+
+        Toast.makeText(BluetoothDiscoverActivity.this, "in ChooseDevice", Toast.LENGTH_SHORT).show();
+        System.out.println("in ChooseDevice pre");
+
         // 获取到这个设备的信息
-        String s = arrayAdapter.getItem(position);
+        String s = arrayAdapter.getItem(selectPosition);
         // 对其进行分割，获取到这个设备的地址
         String address = s.substring(s.indexOf(":") + 1).trim();
         // 判断当前是否还是正在搜索周边设备，如果是则暂停搜索
@@ -190,37 +164,42 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
         if (selectDevice == null) {
             //通过地址获取到该设备
             selectDevice = mBluetoothAdapter.getRemoteDevice(address);
-        }
-        // 这里需要try catch一下，以防异常抛出
-        try {
-            // 判断客户端接口是否为空
-            if (clientSocket == null) {
-                // 获取到客户端接口
-                clientSocket = selectDevice
-                        .createRfcommSocketToServiceRecord(MY_UUID);
-                // 向服务端发送连接
-                clientSocket.connect();
-                // 获取到输出流，向外写数据
-                os = clientSocket.getOutputStream();
-
-            }
-            // 判断是否拿到输出流
-            if (os != null) {
-                // 需要发送的信息
-                String text = "成功发送信息";
-                // 以utf-8的格式发送出去
-                os.write(text.getBytes("UTF-8"));
-            }
-            // 吐司一下，告诉用户发送成功
-            Toast.makeText(this, "发送信息成功，请查收", Toast.LENGTH_SHORT).show();
-        } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-            // 如果发生异常则告诉用户发送失败
-            Toast.makeText(this, "发送信息失败", Toast.LENGTH_SHORT).show();
+            System.out.println("selectDevice name: " + selectDevice.getName());
+            System.out.println("selectDevice address: " + selectDevice.getAddress());
         }
 
+        btIntent.putExtra("deviceName", s);
+        btIntent.putExtra("selectedDevice", selectDevice);
+//        btIntent.putExtra("actionType", "connect");
+        startService(btIntent);
+
+        Toast.makeText(BluetoothDiscoverActivity.this, "End of ChooseDevice", Toast.LENGTH_SHORT).show();
     }
+
+
+    // 注册广播接收者
+    private BroadcastReceiver receiver = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context arg0, Intent intent) {
+            // 获取到广播的action
+            String action = intent.getAction();
+            // 判断广播是搜索到设备还是搜索完成
+            if (action.equals(BluetoothDevice.ACTION_FOUND)) {
+                // 找到设备后获取其设备
+                BluetoothDevice device = intent.getParcelableExtra(BluetoothDevice.EXTRA_DEVICE);
+                // 判断这个设备是否是之前已经绑定过了，如果是则不需要添加，在程序初始化的时候已经添加了
+                if (device.getBondState() != BluetoothDevice.BOND_BONDED) {
+                    // 设备没有绑定过，则将其保持到arrayList集合中
+                    bluetoothDevices.add(device.getName() + ":" + device.getAddress() + "\n");
+                    // 更新字符串数组适配器，将内容显示在listView中
+                    arrayAdapter.notifyDataSetChanged();
+                }
+            } else if (action.equals(BluetoothAdapter.ACTION_DISCOVERY_FINISHED)) {
+                setTitle("搜索完成");
+            }
+        }
+    };
+
 
     // 创建handler，因为我们接收是采用线程来接收的，在线程中无法操作UI，所以需要handler
     Handler handler = new Handler() {
@@ -251,7 +230,9 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
         }
 
         public void run() {
+
             try {
+
                 // 接收其客户端的接口
                 socket = serverSocket.accept();
                 // 获取到输入流
@@ -261,6 +242,8 @@ public class BluetoothDiscoverActivity extends Activity implements OnItemClickLi
 
                 // 无线循环来接收数据
                 while (true) {
+//                    Log.d("hhp", "jskdjflksdjlfjsdsf双方的诉讼的风");
+
                     // 创建一个128字节的缓冲
                     byte[] buffer = new byte[128];
                     // 每次读取128字节，并保存其读取的角标

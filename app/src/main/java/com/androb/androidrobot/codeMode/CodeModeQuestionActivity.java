@@ -3,6 +3,7 @@ package com.androb.androidrobot.codeMode;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -13,6 +14,7 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.RegisterActivity;
+import com.androb.androidrobot.messageUtil.MessageService;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -37,7 +39,15 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 
     private String answerString;
 
+    private String quesType = "code";
+
     private SpansManager mSpansManager;
+
+
+
+    // 处理输入格式
+//    private MessageService msgService;
+
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,8 +63,6 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         questionId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
         System.out.println("Question ID: " + questionId);
-
-
 
         submitButton.setOnClickListener(this);
 
@@ -83,13 +91,23 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     public void onClick(View view) {
         switch (view.getId()){
             case R.id.code_ques_submit_btn:
+
+                Intent submitIntent = new Intent(this, MessageService.class);
+
                 System.out.println("clicked submit");
 
                 // 检查输入格式？还是不在这里做？？
 
                 Toast.makeText(this, getMyAnswerStr(), Toast.LENGTH_LONG).show();
                 answerString = getMyAnswerStr();
-                System.out.println("answer string: " + answerString);
+                System.out.println("quesId: " + questionId);
+
+                submitIntent.putExtra("answerStr", answerString);
+                submitIntent.putExtra("quesType", quesType);
+                submitIntent.putExtra("quesId", questionId + "");
+                startService(submitIntent);
+
+
                 break;
         }
     }

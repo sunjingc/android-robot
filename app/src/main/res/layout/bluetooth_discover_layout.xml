@@ -19,7 +19,7 @@
     <ListView
         android:id="@+id/device_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="370dp"
         android:choiceMode="singleChoice"
         android:cacheColorHint="@android:color/transparent"
         android:listSelector="@android:color/transparent" />
@@ -29,6 +29,7 @@
         android:id="@+id/choose_device_btn"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:onClick="onClick_ChooseDevice"
         android:text="确认连接该设备" />
 
