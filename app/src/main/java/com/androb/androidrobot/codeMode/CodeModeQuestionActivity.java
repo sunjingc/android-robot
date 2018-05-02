@@ -1,9 +1,11 @@
 package com.androb.androidrobot.codeMode;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Message;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.view.View;
@@ -42,6 +44,8 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     private String quesType = "code";
 
     private SpansManager mSpansManager;
+
+    private AlertDialog.Builder builder;
 
 
 
@@ -132,6 +136,27 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 //        System.out.println("in GetMYAnswerStr");
         mSpansManager.setLastCheckedSpanText(etInput.getText().toString());
         return mSpansManager.getMyAnswer().toString();
+    }
+
+
+    private void showHelpDialog(View view) {
+        builder=new AlertDialog.Builder(this);
+        builder.setIcon(R.mipmap.ic_launcher);
+        builder.setTitle("帮助");
+        builder.setMessage(R.string.help_msg);
+
+        //监听下方button点击事件
+        builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "那就加油吧", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //设置对话框是可取消的
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
 

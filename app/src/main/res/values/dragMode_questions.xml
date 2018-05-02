@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="d_ques_1">让小车前进4米，右转90°，再后退3米 </string>
+    <string name="d_ques_2">让小车前进2米，暂停3秒之后，唱一首歌 </string>
+    <string name="d_ques_3">让小车沿着一个边长为5米的正方形运动 </string>
+    <string name="d_ques_4">先让小车后退6米，再唱5遍歌 </string>
+</resources>

@@ -42,8 +42,8 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         _dragModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
-                Intent intent = new Intent(getApplicationContext(), DragTestActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), DragTestActivity.class);
                 startActivity(intent);
             }
         });

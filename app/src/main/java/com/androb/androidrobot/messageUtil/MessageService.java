@@ -11,6 +11,8 @@ import com.androb.androidrobot.connectionUtil.BluetoothService;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.util.HashMap;
+
 /**
  * Created by kaki on 2018/04/26.
  */
@@ -25,9 +27,14 @@ public class MessageService extends Service {
     private final int CAR_RIGHT = 2;
     private final int CAR_LEFT = 3;
 
+    private final int CAR_PAUSE = 4;
+    private final int CAR_SING = 5;
+
     private String quesType;
     private String quesId;
     private String answerStr;
+
+    private HashMap<String, Integer> dragTranslation = new HashMap<>();
 
     private JSONObject jsonResult;
 
@@ -52,6 +59,14 @@ public class MessageService extends Service {
 
         System.out.println("MessageService onStartCommand invoke");
 
+        dragTranslation.put("前进", CAR_FORWARD);
+        dragTranslation.put("后退", CAR_BACKWARD);
+        dragTranslation.put("左转", CAR_LEFT);
+        dragTranslation.put("右转", CAR_RIGHT);
+        dragTranslation.put("暂停", CAR_PAUSE);
+        dragTranslation.put("唱歌", CAR_SING);
+
+
         answerStr = intent.getStringExtra("answerStr");
         quesType = intent.getStringExtra("quesType");
         quesId = intent.getStringExtra("quesId");
@@ -71,6 +86,14 @@ public class MessageService extends Service {
             case "graph":
                 try {
                     jsonResult = this.getGraphJSON(answerStr, qid);
+                } catch (JSONException e) {
+                    e.printStackTrace();
+                }
+                break;
+
+            case "drag":
+                try {
+                    jsonResult = this.getDragJSON(answerStr, qid);
                 } catch (JSONException e) {
                     e.printStackTrace();
                 }
@@ -195,9 +218,99 @@ public class MessageService extends Service {
                     }
 
                 }
+
+            case 3:
+
+                for(String curStr : strs) {
+                    String curSplitStr[] = curStr.split(".");
+                    String action = curSplitStr[1].split("\\(")[0];
+
+                    String param = curSplitStr[1].split("\\(")[1];
+
+                    switch(action) {
+                        case "forward":
+                            graphJson.put(CAR_FORWARD + "", param);
+                            break;
+
+                        case "backward":
+                            graphJson.put(CAR_BACKWARD + "", param);
+                            break;
+
+                        case "right":
+                            graphJson.put(CAR_RIGHT + "", param);
+                            break;
+
+                        case "left":
+                            graphJson.put(CAR_LEFT + "", param);
+                            break;
+
+                    }
+
+                }
         }
 
 
         return graphJson;
+    }
+
+    private JSONObject getDragJSON(String result, int qid) throws JSONException {
+        JSONObject dragJson = new JSONObject();
+
+        String lowerStr = result.toLowerCase();
+        int length = lowerStr.length();
+
+        lowerStr = lowerStr.substring(1, length - 1);
+        System.out.println("getDragJSON-lowerStr: " + lowerStr);
+
+        String strs[] = lowerStr.split(",");
+
+        System.out.println("strs length: " + strs.length);
+
+        int num = strs.length;
+
+        for(int cur = 0; cur < num; cur++) {
+            String temp = strs[cur];
+            String para = "";
+
+            if(temp.contains("前进")) {
+                String tempNum = temp.split("前进")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_FORWARD + "", para);
+            }
+            else if(temp.contains("后退")) {
+                String tempNum = temp.split("后退")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_BACKWARD + "", para);
+            }
+            else if(temp.contains("左转")) {
+                String tempNum = temp.split("左转")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_LEFT + "", para);
+            }
+            else if(temp.contains("右转")) {
+                String tempNum = temp.split("右转")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_RIGHT + "", para);
+            }
+            else if(temp.contains("暂停")) {
+                String tempNum = temp.split("暂停")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_PAUSE + "", para);
+            }
+            else if(temp.contains("唱歌")) {
+                String tempNum = temp.split("唱歌")[1];
+                para = tempNum.substring(0, tempNum.length() - 1);
+
+                dragJson.put(CAR_SING + "", para);
+            }
+        }
+        System.out.println(dragJson.toString());
+
+        return dragJson;
     }
 }

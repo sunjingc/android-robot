@@ -49,6 +49,16 @@
             android:layout_height="50dp"
             android:text="提交" />
 
+        <ImageButton
+            android:id="@+id/help_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:scaleType="centerInside"
+            android:src="@drawable/help_icon">
+        </ImageButton>
+
     </LinearLayout>
 
 </RelativeLayout>

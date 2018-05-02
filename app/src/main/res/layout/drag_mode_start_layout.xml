@@ -35,13 +35,5 @@
 
         <Button android:text="4" />
 
-        <Button android:text="5" />
-
-        <Button android:text="6" />
-
-        <Button android:text="7" />
-
-        <Button android:text="8" />
-
     </GridLayout>
 </LinearLayout>

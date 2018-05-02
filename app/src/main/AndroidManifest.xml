@@ -59,13 +59,13 @@
         <activity android:name=".graphMode.GraphModeQuestionActivity"
             android:screenOrientation="landscape"/>
 
-        <!--<activity android:name=".dragMode.DragModeQuestionActivity"-->
-            <!--android:screenOrientation="landscape"/>-->
+        <activity android:name=".dragMode.DragModeQuestionActivity"
+            android:screenOrientation="landscape"/>
 
         <!--<activity android:name=".dragAndDrop.DragActivity" />-->
 
-        <activity android:name=".dragAndDrop.DragTestActivity"
-            android:screenOrientation="portrait"/>
+        <!--<activity android:name=".dragAndDrop.DragTestActivity"-->
+            <!--android:screenOrientation="portrait"/>-->
 
         <activity android:name=".connectionUtil.BluetoothDiscoverActivity"
             android:screenOrientation="portrait"/>

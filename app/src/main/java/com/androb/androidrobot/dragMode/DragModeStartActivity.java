@@ -111,12 +111,11 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
 
     @Override
     public void onClick(View v) {
-        System.out.println("in DragStart onClick");
+//        System.out.println("in DragStart onClick");
         switch (v.getId()) {
             case R.id.drag_ques_1:
                 // 请求码的值随便设置，但必须>=0
                 mIntent.putExtra("btn_id", "1");
-                System.out.println("clicked 1 in DragStart");
                 startActivity(mIntent);
                 break;
             case R.id.drag_ques_2:

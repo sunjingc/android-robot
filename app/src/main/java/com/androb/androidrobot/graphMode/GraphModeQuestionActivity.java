@@ -1,7 +1,9 @@
 package com.androb.androidrobot.graphMode;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.AppCompatButton;
 import android.view.View;
@@ -9,6 +11,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
@@ -55,6 +58,9 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     @BindView(R.id.graph_btn_if)
     AppCompatButton btn_if;
 
+    @BindView(R.id.help_btn)
+    ImageButton btn_help;
+
     private Intent mIntent;
     private int questionId = 0;
 
@@ -74,6 +80,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     private List<String> answerStrList = new ArrayList<>();
     private String answerStr;
 
+    private AlertDialog.Builder builder;
+
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -92,6 +100,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
         btn_if.setOnClickListener(this);
         btn_order.setOnClickListener(this);
         btn_if.setOnClickListener(this);
+
+        btn_help.setOnClickListener(this);
 
         graphArea = (RelativeLayout) findViewById(R.id.graph_area);
 
@@ -125,6 +135,11 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
         ViewGroup.LayoutParams image_params;
 
         switch (view.getId()){
+
+            case R.id.help_btn:
+                this.showHelpDialog(view);
+                break;
+
             case R.id.graph_btn_start:
 
                 if (ptr != -1) {
@@ -431,6 +446,26 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
             System.out.println("graphQuesMode: start doesn't exist");
             return false;
         }
+    }
+
+    private void showHelpDialog(View view) {
+        builder=new AlertDialog.Builder(this);
+        builder.setIcon(R.mipmap.ic_launcher);
+        builder.setTitle("帮助");
+        builder.setMessage(R.string.help_msg);
+
+        //监听下方button点击事件
+        builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+                Toast.makeText(getApplicationContext(), "那就加油吧", Toast.LENGTH_SHORT).show();
+            }
+        });
+
+        //设置对话框是可取消的
+        builder.setCancelable(true);
+        AlertDialog dialog=builder.create();
+        dialog.show();
     }
 
 

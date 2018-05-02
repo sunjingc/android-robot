@@ -1,14 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="horizontal">
 
-    <!--<com.androb.androidrobot.dragMode.DragModeQuestionView-->
-        <!--android:id="@+id/dragMode_question_layout"-->
-        <!--android:layout_width="match_parent"-->
-        <!--android:layout_height="match_parent"-->
-        <!--android:layout_margin="20dp" />-->
 
     <ScrollView
         android:layout_width="190dp"
@@ -17,15 +12,15 @@
         android:fadingEdge="vertical">
 
         <LinearLayout
+            android:id="@+id/btns_layout"
             android:layout_width="190dp"
             android:layout_height="match_parent"
             android:orientation="vertical">
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_forward"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_forward"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"
@@ -34,9 +29,8 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_backward"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_backward"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"
@@ -45,9 +39,18 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_left"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_pause"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="暂停"
+                android:textColor="@color/white"/>
+
+            <android.support.v7.widget.AppCompatButton
+                android:layout_width="180dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_left"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"
@@ -56,9 +59,8 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_right"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_right"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"
@@ -67,35 +69,32 @@
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_if"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_sing"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:backgroundTint="@color/material_orange_500"
-                android:text="if"
+                android:backgroundTint="@color/material_blue_500"
+                android:text="唱歌"
                 android:textColor="@color/white"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_while"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_repeat"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_orange_500"
-                android:text="while"
+                android:text="循环"
                 android:textColor="@color/white"/>
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/btn_for"
-                android:layout_marginTop="10dp"
+                android:layout_height="45dp"
+                android:id="@+id/drag_btn_end"
                 android:gravity="center"
                 android:layout_gravity="center"
-                android:backgroundTint="@color/material_orange_500"
-                android:text="for"
+                android:backgroundTint="@color/material_green_500"
+                android:text="结束"
                 android:textColor="@color/white"/>
 
         </LinearLayout>
@@ -103,42 +102,72 @@
     </ScrollView>
 
 
+    <TextView
+        android:id="@+id/drag_question_text"
+        android:layout_width="300dp"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="200dp"
+        android:layout_marginRight="10dp"
+        android:layout_marginTop="15dp"
+        android:lineSpacingMultiplier="1.5"
+        android:text="Question here"
+        android:textSize="16sp" />
+
+    <ImageButton
+        android:id="@+id/help_btn"
+        android:layout_width="45dp"
+        android:layout_height="45dp"
+        android:layout_marginTop="8dp"
+        android:layout_marginLeft="535dp"
+        android:adjustViewBounds="false"
+        android:cropToPadding="false"
+        android:scaleType="centerInside"
+        android:src="@drawable/help_icon">
+    </ImageButton>
+
     <ScrollView
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="180dp"
+        android:layout_marginTop="50dp"
+        android:layout_marginLeft="190dp"
         android:scrollbars="vertical"
         android:fadingEdge="vertical">
 
         <LinearLayout
+            android:id="@+id/answer_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="180dp"
             android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/drag_question_text"
-                android:layout_width="300dp"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="15dp"
-                android:layout_marginLeft="30dp"
-                android:layout_marginRight="10dp"
-                android:lineSpacingMultiplier="1.5"
-                android:textSize="16sp"
-                android:text="Question here"/>
-
-
             <android.support.v7.widget.AppCompatButton
-                android:layout_width="300dp"
-                android:layout_height="50dp"
                 android:id="@+id/starting_point"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
+                android:layout_width="300dp"
+                android:layout_height="45dp"
                 android:layout_gravity="center"
+                android:layout_marginTop="5dp"
                 android:backgroundTint="@color/material_green_500"
+                android:gravity="center"
                 android:text="Start"
-                android:textColor="@color/white"/>
-
+                android:textColor="@color/white" />
         </LinearLayout>
 
     </ScrollView>
 
-</LinearLayout>
+    <LinearLayout
+        android:layout_marginLeft="190dp"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/drag_ques_submit_btn"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:layout_marginTop="230dp"
+            android:layout_marginLeft="120dp"
+            android:gravity="center"
+            android:text="提交" />
+
+    </LinearLayout>
+
+
+</FrameLayout>
