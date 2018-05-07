@@ -31,6 +31,10 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
     Button _dragQues1;
     @BindView(R.id.drag_ques_2)
     Button _dragQues2;
+    @BindView(R.id.drag_ques_3)
+    Button _dragQues3;
+    @BindView(R.id.drag_ques_4)
+    Button _dragQues4;
 
 //    private TitleBar mTitleBar;
 //    private Select_1Blank select_1btn;
@@ -52,61 +56,9 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
 
         _dragQues1.setOnClickListener(this);
         _dragQues2.setOnClickListener(this);
+        _dragQues3.setOnClickListener(this);
+        _dragQues4.setOnClickListener(this);
 
-//        mTitleBar = (TitleBar) this.findViewById(R.id.title);
-//
-//        select_1btn = (Select_1Blank) this.findViewById(R.id.select_1btn_1);
-//
-//        list = new ArrayList<String>();
-//        list.add("1s");
-//        list.add("2s");
-//        list.add("3s");
-//        list.add("4s");
-//        list.add("5s");
-//        sp = (Spinner) findViewById(R.id.select_1_blank_spinner);
-//
-//
-//        // TODO: 动态生成自定义控件？？id怎么办
-////        list_test = new ArrayList<String>();
-////        list_test.add("15°");
-////        list_test.add("30°");
-////        list_test.add("45°");
-////        list_test.add("60°");
-////        list_test.add("75°");
-////        list_test.add("90°");
-////        list_test.add("105°");
-////        list_test.add("120°");
-////        list_test.add("135°");
-////        list_test.add("150°");
-////        list_test.add("165°");
-////        list_test.add("180°");
-////        sp = (Spinner) findViewById(R.id.select_1btn_test_spinner);
-//
-//        final ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
-//                android.R.layout.simple_spinner_item, list);
-//        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        sp.setAdapter(adapter);
-//
-//
-//        mTitleBar.setLeftListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DragModeStartActivity.this, "点击左键", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        mTitleBar.setRightListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                Toast.makeText(DragModeStartActivity.this, "点击右键", Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//
-//        ButterKnife.bind(this);
-//
-//        System.out.println("in onCreate");
-
-//        initData();
     }
 
     @Override
@@ -120,6 +72,14 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
                 break;
             case R.id.drag_ques_2:
                 mIntent.putExtra("btn_id", "2");
+                startActivity(mIntent);
+                break;
+            case R.id.drag_ques_3:
+                mIntent.putExtra("btn_id", "3");
+                startActivity(mIntent);
+                break;
+            case R.id.drag_ques_4:
+                mIntent.putExtra("btn_id", "4");
                 startActivity(mIntent);
                 break;
             default:

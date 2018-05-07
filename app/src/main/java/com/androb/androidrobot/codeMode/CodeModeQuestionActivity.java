@@ -1,7 +1,10 @@
 package com.androb.androidrobot.codeMode;
 
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.os.Message;
@@ -11,12 +14,16 @@ import android.text.TextUtils;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.RegisterActivity;
 import com.androb.androidrobot.messageUtil.MessageService;
+
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -36,6 +43,9 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     @BindView(R.id.et_input)
     EditText etInput;
 
+    @BindView(R.id.code_help_btn)
+    ImageButton helpButton;
+
     private int questionId = 0;
     private String mTestStr;
 
@@ -47,11 +57,11 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 
     private AlertDialog.Builder builder;
 
-
+    private String jsonResult;
+    private JSONReceiver receiver;
 
     // 处理输入格式
 //    private MessageService msgService;
-
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,8 +79,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         System.out.println("Question ID: " + questionId);
 
         submitButton.setOnClickListener(this);
-
-
+        helpButton.setOnClickListener(this);
 
         switch (questionId) {
             case 1:
@@ -81,6 +90,14 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
                 codeQuestionText.setText(R.string.c_ques_2);
                 codeInputText.setText(R.string.c_code_2);
                 break;
+            case 3:
+                codeQuestionText.setText(R.string.c_ques_3);
+                codeInputText.setText(R.string.c_code_3);
+                break;
+            case 4:
+                codeQuestionText.setText(R.string.c_ques_4);
+                codeInputText.setText(R.string.c_code_4);
+                break;
             default:
                 break;
         }
@@ -89,28 +106,59 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         mSpansManager = new SpansManager(this, codeInputText, etInput);
         mSpansManager.doFillBlank(mTestStr);
 
+        receiver = new JSONReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+        registerReceiver(receiver, filter);
+
     }
 
     @Override
     public void onClick(View view) {
+
+        Toast.makeText(this, getMyAnswerStr(), Toast.LENGTH_LONG).show();
+        answerString = getMyAnswerStr();
+
         switch (view.getId()){
             case R.id.code_ques_submit_btn:
 
-                Intent submitIntent = new Intent(this, MessageService.class);
+                boolean isValid = false;
+                switch(questionId) {
+                    case 1:
+                        isValid = this.checkQues1(answerString);
+                        break;
 
-                System.out.println("clicked submit");
+                    case 2:
+                        isValid = this.checkQues2(answerString);
+                        break;
 
-                // 检查输入格式？还是不在这里做？？
+                    case 3:
+                        isValid = this.checkQues3(answerString);
+                        break;
 
-                Toast.makeText(this, getMyAnswerStr(), Toast.LENGTH_LONG).show();
-                answerString = getMyAnswerStr();
-                System.out.println("quesId: " + questionId);
+                    case 4:
+                        isValid = this.checkQues4(answerString);
+                        break;
+                }
 
-                submitIntent.putExtra("answerStr", answerString);
-                submitIntent.putExtra("quesType", quesType);
-                submitIntent.putExtra("quesId", questionId + "");
-                startService(submitIntent);
+                if(isValid) {
+                    Intent submitIntent = new Intent(this, MessageService.class);
 
+                    submitIntent.putExtra("answerStr", answerString);
+                    submitIntent.putExtra("quesType", quesType);
+                    submitIntent.putExtra("quesId", questionId + "");
+                    startService(submitIntent);
+                }
+                else {
+                    Toast.makeText(getApplicationContext(), "哪里有点问题啊", Toast.LENGTH_SHORT).show();
+                }
+
+
+                break;
+
+            case R.id.code_help_btn:
+
+                this.showHelpDialog(view);
 
                 break;
         }
@@ -138,12 +186,11 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         return mSpansManager.getMyAnswer().toString();
     }
 
-
     private void showHelpDialog(View view) {
         builder=new AlertDialog.Builder(this);
         builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle("帮助");
-        builder.setMessage(R.string.help_msg);
+        builder.setTitle("编程模式帮助");
+        builder.setMessage(R.string.code_help_msg);
 
         //监听下方button点击事件
         builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
@@ -159,5 +206,78 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         dialog.show();
     }
 
+    private boolean checkQues1(String answerStr) {
+        boolean valid = true;
+        int len = answerStr.length();
+        answerStr = answerStr.substring(1, len - 1);
+        String sub[] = answerStr.split(", ");
+
+        if(!sub[0].equals("forward") || !this.isInteger(sub[1]) || !this.isInteger(sub[3])
+                || !this.isInteger(sub[4]) || !sub[2].equals("right") ) {
+            return false;
+        }
+        return valid;
+    }
+
+    private boolean checkQues2(String answerStr) {
+        boolean valid = true;
+        int len = answerStr.length();
+        answerStr = answerStr.substring(1, len - 1);
+        String sub[] = answerStr.split(", ");
+
+        if(!sub[1].equals("pause") || !this.isInteger(sub[0]) || !this.isInteger(sub[2])
+                || !this.isInteger(sub[4]) || !sub[3].equals("sing") ) {
+            return false;
+        }
+        return valid;
+    }
+
+    private boolean checkQues3(String answerStr) {
+        boolean valid = true;
+        int len = answerStr.length();
+        answerStr = answerStr.substring(1, len - 1);
+        String sub[] = answerStr.split(", ");
+
+        if(!this.isInteger(sub[0]) || !this.isInteger(sub[1]) || !this.isInteger(sub[2]) ) {
+            return false;
+        }
+        return valid;
+    }
+
+    private boolean checkQues4(String answerStr) {
+        boolean valid = true;
+        int len = answerStr.length();
+        answerStr = answerStr.substring(1, len - 1);
+        String sub[] = answerStr.split(", ");
+
+        if(!this.isInteger(sub[0]) || !this.isInteger(sub[1])
+                || !this.isInteger(sub[2]) || !this.isInteger(sub[4]) ) {
+            valid = false;
+        }
+
+        if(!sub[3].equals("right") && !sub[3].equals("left")) {
+            valid = false;
+        }
+        return valid;
+    }
+
+
+    private boolean isInteger(String input){
+        boolean result = false;
+        Matcher mer = Pattern.compile("^[0-9]+$").matcher(input);
+        result = mer.find();
+        System.out.println("in isInt: " + input + "   " + result);
+        return result;
+    }
+
+    public class JSONReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            jsonResult = intent.getStringExtra("json");
+
+            System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
+        }
+    }
 
 }

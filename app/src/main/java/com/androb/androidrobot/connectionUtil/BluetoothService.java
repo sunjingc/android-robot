@@ -24,6 +24,8 @@ public class BluetoothService extends Service {
     private BluetoothDevice chosenDevice;
     private BluetoothSocket socket;       //蓝牙连接socket
 
+    private BluetoothSocketSingleton btSingleton;
+
     private int connectState = 0;
 
 
@@ -97,9 +99,13 @@ public class BluetoothService extends Service {
         final String SPP_UUID = "00001101-0000-1000-8000-00805F9B34FB";
         System.out.println("UUID: " + SPP_UUID);
         UUID uuid = UUID.fromString(SPP_UUID);
-        BluetoothSocket socket = device.createRfcommSocketToServiceRecord(uuid);
+        socket = device.createRfcommSocketToServiceRecord(uuid);
         socket.connect();
+
+        // 设置singleton中的socket
+        btSingleton.setSocket(socket);
     }
+
 
     public void initSocket() {
         BluetoothSocket temp = null;

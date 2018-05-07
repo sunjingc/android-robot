@@ -1,6 +1,5 @@
 package com.androb.androidrobot.connectionUtil;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
@@ -19,12 +18,10 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ArrayAdapter;
 import android.widget.BaseAdapter;
 import android.widget.ListView;
@@ -33,7 +30,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.messageUtil.MessageService;
 
 import butterknife.ButterKnife;
 
@@ -51,28 +47,19 @@ public class BluetoothDiscoverActivity extends Activity {
     // ListView的字符串数组适配器
     private ArrayAdapter<String> arrayAdapter;
     // UUID，蓝牙建立链接需要的
-    private final UUID MY_UUID = UUID
-            .fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3");
+    private final UUID MY_UUID = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3");
     // 为其链接创建一个名称
     private final String NAME = "Bluetooth_Socket";
     // 选中发送数据的蓝牙设备，全局变量，否则连接在方法执行完就结束了
     private BluetoothDevice selectDevice;
     // 获取到选中设备的客户端串口，全局变量，否则连接在方法执行完就结束了
-    private BluetoothSocket clientSocket;
-    // 获取到向设备写的输出流，全局变量，否则连接在方法执行完就结束了
-    private OutputStream os;
-    // 服务端利用线程不断接受客户端信息
-    private AcceptThread thread;
 
     //用于记录用户选择的变量
     private int selectPosition = -1;
 
     private String chosenResult;
 
-
-
-    private BluetoothConnection btConn;
-
+//    private BluetoothDeviceSingleton btDeviceSingleton = new BluetoothDeviceSingleton();
 
 
     @Override
@@ -168,10 +155,12 @@ public class BluetoothDiscoverActivity extends Activity {
             System.out.println("selectDevice address: " + selectDevice.getAddress());
         }
 
-        btIntent.putExtra("deviceName", s);
-        btIntent.putExtra("selectedDevice", selectDevice);
-//        btIntent.putExtra("actionType", "connect");
-        startService(btIntent);
+        BluetoothDeviceSingleton.setDevice(selectDevice);
+
+//        btIntent.putExtra("deviceName", s);
+//        btIntent.putExtra("selectedDevice", selectDevice);
+////        btIntent.putExtra("actionType", "connect");
+//        startService(btIntent);
 
         Toast.makeText(BluetoothDiscoverActivity.this, "End of ChooseDevice", Toast.LENGTH_SHORT).show();
     }
@@ -211,57 +200,6 @@ public class BluetoothDiscoverActivity extends Activity {
             Toast.makeText(BluetoothDiscoverActivity.this, (String) msg.obj, Toast.LENGTH_SHORT).show();
         }
     };
-
-    // 服务端接收信息线程
-    private class AcceptThread extends Thread {
-        private BluetoothServerSocket serverSocket;// 服务端接口
-        private BluetoothSocket socket;// 获取到客户端的接口
-        private InputStream is;// 获取到输入流
-        private OutputStream os;// 获取到输出流
-
-        public AcceptThread() {
-            try {
-                // 通过UUID监听请求，然后获取到对应的服务端接口
-                serverSocket = mBluetoothAdapter
-                        .listenUsingRfcommWithServiceRecord(NAME, MY_UUID);
-            } catch (Exception e) {
-                // TODO: handle exception
-            }
-        }
-
-        public void run() {
-
-            try {
-
-                // 接收其客户端的接口
-                socket = serverSocket.accept();
-                // 获取到输入流
-                is = socket.getInputStream();
-                // 获取到输出流
-                os = socket.getOutputStream();
-
-                // 无线循环来接收数据
-                while (true) {
-//                    Log.d("hhp", "jskdjflksdjlfjsdsf双方的诉讼的风");
-
-                    // 创建一个128字节的缓冲
-                    byte[] buffer = new byte[128];
-                    // 每次读取128字节，并保存其读取的角标
-                    int count = is.read(buffer);
-                    // 创建Message类，向handler发送数据
-                    Message msg = new Message();
-                    // 发送一个String的数据，让他向上转型为obj类型
-                    msg.obj = new String(buffer, 0, count, "utf-8");
-                    // 发送数据
-                    handler.sendMessage(msg);
-                }
-            } catch (Exception e) {
-                // TODO: handle exception
-                e.printStackTrace();
-            }
-
-        }
-    }
 
 
 

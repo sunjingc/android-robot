@@ -6,6 +6,6 @@
 
     <string name="g_ques_3">让小车沿一个边长为5米的正方形移动 </string>
 
-    <string name="g_ques_4">如果今天是周六，就让小车前进10米，否则后退5米 </string>
+    <string name="g_ques_4">如果今天是周六，就让小车前进10米 </string>
 
 </resources>

@@ -10,10 +10,26 @@
 
     <string name="bluetooth_setting">蓝牙设置</string>
 
-    <string name="help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
-                            右转：Car.backward(角度/deg)\n左转：Car.backward(角度/deg)\n
+    <string name="drag_help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
+                            旋转：Car.rotate(方向：right/left, 角度/deg)\n
+                            暂停：Car.pause(时间/秒)\n
+                            发出声音：Car.sing(次数)\n
+                            循环：repeat(次数)\n
+                            判断日期：if(Today == 英文日期)\n
+    </string>
+
+    <string name="graph_help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
+                            右转：Car.right(角度/deg)\n左转：Car.left(角度/deg)\n
                             暂停：Car.pause(时间/秒)\n
                             发出声音：Car.sing()\n
+                            循环：if Time &lt; (次数)\n
+                            判断日期：if(Today == (1~7))\n
+    </string>
+
+    <string name="code_help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
+                            旋转：Car.rotate(方向：right/left, 角度/deg)\n
+                            暂停：Car.pause(时间/秒)\n
+                            发出声音：Car.sing(次数)\n
                             循环：repeat(次数)\n
                             判断日期：if(Today == 英文日期)\n
     </string>

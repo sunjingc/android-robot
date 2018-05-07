@@ -22,6 +22,10 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
     Button _codeQues1;
     @BindView(R.id.code_ques_2)
     Button _codeQues2;
+    @BindView(R.id.code_ques_3)
+    Button _codeQues3;
+    @BindView(R.id.code_ques_4)
+    Button _codeQues4;
 
     private Intent mIntent;
 
@@ -36,6 +40,8 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
 
         _codeQues1.setOnClickListener(this);
         _codeQues2.setOnClickListener(this);
+        _codeQues3.setOnClickListener(this);
+        _codeQues4.setOnClickListener(this);
 
         System.out.println("in CodeMode onCreate");
 
@@ -45,13 +51,19 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.code_ques_1:
-                // 请求码的值随便设置，但必须>=0
                 mIntent.putExtra("btn_id", "1");
-                System.out.println("clicked 1 in Start");
                 startActivity(mIntent);
                 break;
             case R.id.code_ques_2:
                 mIntent.putExtra("btn_id", "2");
+                startActivity(mIntent);
+                break;
+            case R.id.code_ques_3:
+                mIntent.putExtra("btn_id", "3");
+                startActivity(mIntent);
+                break;
+            case R.id.code_ques_4:
+                mIntent.putExtra("btn_id", "4");
                 startActivity(mIntent);
                 break;
             default:

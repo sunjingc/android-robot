@@ -1,13 +1,19 @@
 package com.androb.androidrobot.dragMode;
 
+import android.bluetooth.BluetoothDevice;
+import android.bluetooth.BluetoothSocket;
+import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -19,10 +25,19 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.connectionUtil.BluetoothDeviceSingleton;
+import com.androb.androidrobot.connectionUtil.BluetoothSocketSingleton;
+import com.androb.androidrobot.connectionUtil.ConnectThread;
 import com.androb.androidrobot.messageUtil.MessageService;
 
+import org.json.JSONObject;
+
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -84,6 +99,16 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
     private AlertDialog.Builder builder;
 
+    private JSONReceiver receiver;
+    private String jsonResult;
+
+    // Bluetooth transfer
+    private BluetoothDevice btDevice;
+
+    BluetoothSocket mmSocket;
+    BluetoothDevice mmDevice = BluetoothDeviceSingleton.getInstance();
+
+
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.drag_mode_question_layout);
@@ -97,6 +122,18 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         quesId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
         initView();
+
+//        btSocket = btSingleton.getInstance();
+
+        btDevice = BluetoothDeviceSingleton.getInstance();
+        Toast.makeText(getApplicationContext(), "BTDevice name: " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+
+//        Toast.makeText(getApplicationContext(), btSocket.getClass().toString(), Toast.LENGTH_SHORT).show();
+
+        receiver = new JSONReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+        registerReceiver(receiver, filter);
 
     }
 
@@ -161,8 +198,8 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     private void showHelpDialog(View view) {
         builder=new AlertDialog.Builder(this);
         builder.setIcon(R.mipmap.ic_launcher);
-        builder.setTitle("帮助");
-        builder.setMessage(R.string.help_msg);
+        builder.setTitle("拖拽模式帮助");
+        builder.setMessage(R.string.drag_help_msg);
 
         //监听下方button点击事件
         builder.setPositiveButton("知道了", new DialogInterface.OnClickListener() {
@@ -462,16 +499,16 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
                 builder=new AlertDialog.Builder(this);
                 builder.setIcon(R.mipmap.ic_launcher);
-                builder.setTitle("唱几秒？");
+                builder.setTitle("唱几遍？");
 
                 /**
                  * 设置内容区域为单选列表项
                  */
-                final String[] itemsSing={"1秒","2秒","3秒","4秒","5秒","6秒","7秒","8秒","9秒","10秒"};
+                final String[] itemsSing={"1遍","2遍","3遍","4遍","5遍"};
                 builder.setSingleChoiceItems(itemsSing, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        singChoice = Integer.valueOf(itemsSing[i].split("秒")[0]);
+                        singChoice = Integer.valueOf(itemsSing[i].split("遍")[0]);
                     }
                 });
 
@@ -481,7 +518,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String temp = (String) btnSing.getText();
                         temp += singChoice;
-                        temp += "秒";
+                        temp += "遍";
                         btnSing.setText(temp);
                     }
                 });
@@ -494,7 +531,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
             case R.id.drag_btn_repeat:
 
-                btnForward.setText("循环");
+                btnRepeat.setText("循环");
 
                 builder=new AlertDialog.Builder(this);
                 builder.setIcon(R.mipmap.ic_launcher);
@@ -507,12 +544,12 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
                 builder.setSingleChoiceItems(itemsRepeat, 0, new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
-                        repeatChoice = i + 1;
+                        repeatChoice = Integer.valueOf(itemsRepeat[i].split("次")[0]);
                     }
                 });
 
                 //监听下方button点击事件
-                builder.setPositiveButton("确定", new DialogInterface.OnClickListener() {
+                builder.setPositiveButton("循环", new DialogInterface.OnClickListener() {
                     @Override
                     public void onClick(DialogInterface dialogInterface, int i) {
                         String temp = (String) btnRepeat.getText();
@@ -537,6 +574,8 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
                     this.getAnswerList();
 
+//                    Toast.makeText(getApplicationContext(), answerStrList.toString(), Toast.LENGTH_SHORT).show();
+
                     Intent msgIntent = new Intent(this, MessageService.class);
                     msgIntent.putExtra("answerStr", answerStrList.toString());
                     msgIntent.putExtra("quesType", "drag");
@@ -557,11 +596,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         answerNum = answerLayout.getChildCount();
         System.out.println("AnswerNum: " + answerNum);
         Button lastChild = (Button) answerLayout.getChildAt(answerNum - 1);
-        if(lastChild.getId() != R.id.drag_btn_end) {
-            System.out.println("last one is not end");
-        }
-        else {
-            System.out.println("last one is end!!!");
+        if(lastChild.getId() == R.id.drag_btn_end) {
             result = true;
         }
         return result;
@@ -572,5 +607,47 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
             answerStrList.add((String) ((Button) answerLayout.getChildAt(i)).getText());
         }
     }
+
+
+
+    public class JSONReceiver extends BroadcastReceiver {
+        @Override
+        public void onReceive(Context context, Intent intent) {
+
+            jsonResult = intent.getStringExtra("json");
+
+            System.out.println("JSONReceiver received jsonResult: " + jsonResult);
+
+            Toast.makeText(getApplicationContext(), "JSONReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
+            
+            this.sendBtMsg(jsonResult);
+
+            Toast.makeText(getApplicationContext(), "after sendBtMsg", Toast.LENGTH_SHORT).show();
+
+        }
+
+        public void sendBtMsg(String msg2send) {
+            //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); //Standard SerialPortService ID
+            UUID uuid = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3"); //Standard SerialPortService ID
+            try {
+
+                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+                if (!mmSocket.isConnected()) {
+                    mmSocket.connect();
+                }
+
+                String msg = msg2send;
+                //msg += "\n";
+                OutputStream mmOutputStream = mmSocket.getOutputStream();
+                mmOutputStream.write(msg.getBytes());
+
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }
+
+        }
+    }
+
 
 }

@@ -1,8 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="c_ques_1">让小车前进4米，右转90°，再后退3米 </string>
-    <string name="c_code_1">Car.forward(____);\nCar.rotate(____, ____);\nCar.backward(____);</string>
+    <string name="c_code_1">Car.____(____);\nCar.rotate(____, ____);\nCar.backward(____);</string>
 
     <string name="c_ques_2">让小车前进2米，暂停3秒之后，唱一首歌 </string>
-    <string name="c_code_2">Car.forward(____);\nCar.pause(____);\nCar.sound(____);</string>
+    <string name="c_code_2">Car.forward(____);\nCar.____(____);\nCar.____(____);</string>
+
+    <string name="c_ques_3">让小车重复5次：前进2米，暂停3秒 </string>
+    <string name="c_code_3">Repeat(____){\n\tCar.forward(____);\nCar.pause(____);\n}</string>
+
+    <string name="c_ques_4">让小车先唱一遍歌，再画出一个边长为3米正方形 </string>
+    <string name="c_code_4">Car.sing(____);\nRepeat(____){\n    Car.forward(____);\n\tCar.rotate(____, ____);\n}</string>
 </resources>

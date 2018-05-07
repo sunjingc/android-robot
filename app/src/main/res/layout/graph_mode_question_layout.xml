@@ -44,7 +44,7 @@
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:id="@+id/graph_btn_start"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_orange_500"
@@ -55,7 +55,7 @@
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:id="@+id/graph_btn_end"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_orange_500"
@@ -66,29 +66,29 @@
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:id="@+id/graph_btn_order"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"
                 android:text="顺序"
                 android:textColor="@color/white"/>
 
-            <android.support.v7.widget.AppCompatButton
-                android:layout_width="180dp"
-                android:layout_height="50dp"
-                android:id="@+id/graph_btn_loop"
-                android:layout_marginTop="10dp"
-                android:gravity="center"
-                android:layout_gravity="center"
-                android:backgroundTint="@color/material_blue_500"
-                android:text="循环"
-                android:textColor="@color/white"/>
+            <!--<android.support.v7.widget.AppCompatButton-->
+                <!--android:layout_width="180dp"-->
+                <!--android:layout_height="50dp"-->
+                <!--android:id="@+id/graph_btn_loop"-->
+                <!--android:layout_marginTop="10dp"-->
+                <!--android:gravity="center"-->
+                <!--android:layout_gravity="center"-->
+                <!--android:backgroundTint="@color/material_blue_500"-->
+                <!--android:text="循环"-->
+                <!--android:textColor="@color/white"/>-->
 
             <android.support.v7.widget.AppCompatButton
                 android:layout_width="180dp"
                 android:layout_height="50dp"
                 android:id="@+id/graph_btn_if"
-                android:layout_marginTop="10dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:backgroundTint="@color/material_blue_500"

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <string name="c_prop_1">forward,f_param,r_direction,r_param,b_param </string>
+
+    <string name="c_prop_2">f_param,pause,p_param,sing,s_param </string>
+
+    <string name="c_prop_3">repeat_param,f_param,p_param </string>
+
+    <string name="c_prop_4">s_param,repeat_param,f_param,r_direction,r_param </string>
+
+</resources>
