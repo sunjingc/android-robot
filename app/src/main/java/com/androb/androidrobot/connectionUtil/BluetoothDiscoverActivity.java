@@ -47,7 +47,7 @@ public class BluetoothDiscoverActivity extends Activity {
     // ListView的字符串数组适配器
     private ArrayAdapter<String> arrayAdapter;
     // UUID，蓝牙建立链接需要的
-    private final UUID MY_UUID = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3");
+    private final UUID MY_UUID = UUID.fromString("94f39d29-7d6d-437d-973d-fba39e49d4ee");
     // 为其链接创建一个名称
     private final String NAME = "Bluetooth_Socket";
     // 选中发送数据的蓝牙设备，全局变量，否则连接在方法执行完就结束了
@@ -134,7 +134,7 @@ public class BluetoothDiscoverActivity extends Activity {
 
     public void onClick_ChooseDevice(View view) {
 
-        Intent btIntent = new Intent(this, BluetoothService.class);
+//        Intent btIntent = new Intent(this, BluetoothService.class);
 
         Toast.makeText(BluetoothDiscoverActivity.this, "in ChooseDevice", Toast.LENGTH_SHORT).show();
         System.out.println("in ChooseDevice pre");
@@ -156,11 +156,6 @@ public class BluetoothDiscoverActivity extends Activity {
         }
 
         BluetoothDeviceSingleton.setDevice(selectDevice);
-
-//        btIntent.putExtra("deviceName", s);
-//        btIntent.putExtra("selectedDevice", selectDevice);
-////        btIntent.putExtra("actionType", "connect");
-//        startService(btIntent);
 
         Toast.makeText(BluetoothDiscoverActivity.this, "End of ChooseDevice", Toast.LENGTH_SHORT).show();
     }

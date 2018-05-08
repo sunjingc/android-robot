@@ -1,4 +1,4 @@
-package com.androb.androidrobot;
+package com.androb.androidrobot.userManagement;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -12,27 +12,40 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.androb.androidrobot.CollegeStuMainActivity;
+import com.androb.androidrobot.R;
+
+import java.util.HashMap;
+
 import butterknife.ButterKnife;
 //import butterknife.InjectView;
 import butterknife.BindView;
+
+import com.android.volley.Request;
 
 
 /**
  * Created by kaki on 2018/03/17.
  */
 
-public class LoginActivity extends AppCompatActivity {
+public class LoginActivity extends AppCompatActivity implements View.OnClickListener {
     private static final String TAG = "LoginActivity";
     private static final int REQUEST_SIGNUP = 0;
 
-    @BindView(R.id.input_email)
-    EditText _emailText;
+    private HashMap<String, String> loginData = new HashMap<>();
+    private String login_url = "http://127.0.0.1:8888/api/member/login.php";
+
+
+    @BindView(R.id.input_uname)
+    EditText _unameText;
     @BindView(R.id.input_password)
     EditText _passwordText;
     @BindView(R.id.btn_login)
     Button _loginButton;
     @BindView(R.id.link_signup)
     TextView _signupLink;
+    @BindView(R.id.link_back_from_login)
+    TextView _returnHomeLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,7 +67,17 @@ public class LoginActivity extends AppCompatActivity {
             public void onClick(View v) {
                 // Start the Signup activity
                 Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
-                startActivityForResult(intent, REQUEST_SIGNUP);
+                startActivity(intent);
+            }
+        });
+
+        _returnHomeLink.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), CollegeStuMainActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -62,7 +85,7 @@ public class LoginActivity extends AppCompatActivity {
     public void login() {
         Log.d(TAG, "Login");
 
-        if (!validate()) {
+        if (!emptyValidate(_unameText, _passwordText)) {
             onLoginFailed();
             return;
         }
@@ -75,7 +98,7 @@ public class LoginActivity extends AppCompatActivity {
         progressDialog.setMessage("Authenticating...");
         progressDialog.show();
 
-        String email = _emailText.getText().toString();
+        String email = _unameText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own authentication logic here.
@@ -125,27 +148,21 @@ public class LoginActivity extends AppCompatActivity {
         _loginButton.setEnabled(true);
     }
 
-    public boolean validate() {
-        boolean valid = true;
+    private boolean emptyValidate(EditText etName, EditText etPassword){
+        String name = etName.getText().toString();
+        String password = etPassword.getText().toString();
+        return (name.isEmpty() && password.isEmpty());
+    }
 
-        String email = _emailText.getText().toString();
-        String password = _passwordText.getText().toString();
+    @Override
+    public void onClick(View view) {
 
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _emailText.setError(null);
+        switch (view.getId()) {
+            case R.id.btn_login:
+
+
+                break;
         }
-
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
-            valid = false;
-        } else {
-            _passwordText.setError(null);
-        }
-
-        return valid;
     }
 
 }

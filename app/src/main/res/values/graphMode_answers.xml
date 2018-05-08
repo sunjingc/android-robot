@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="g_ans_1">{"1":"4","2":"90","0":"3"}</string>
+    <string name="g_ans_2">{"1":"2","4":"3","5":"1"}</string>
+    <string name="g_ans_3_1">{"10":{"4":{"1":"5","2":"90"}}}</string>
+    <string name="g_ans_3_2">{"10":{"4":{"1":"5","3":"90"}}}</string>
+    <string name="g_ans_3_3">{"10":{"4":{"2":"90","1":"5"}}}</string>
+    <string name="g_ans_3_4">{"10":{"4":{"3":"90","1":"5"}}}</string>
+    <string name="g_ans_4_1">{}</string>
+    <string name="g_ans_4_2">{"1":"10"}</string>
+</resources>

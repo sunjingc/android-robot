@@ -10,10 +10,8 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
-import android.os.Handler;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.util.Log;
 import android.view.DragEvent;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,15 +24,12 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.connectionUtil.BluetoothDeviceSingleton;
-import com.androb.androidrobot.connectionUtil.BluetoothSocketSingleton;
-import com.androb.androidrobot.connectionUtil.ConnectThread;
+import com.androb.androidrobot.connectionUtil.BluetoothMsgUtil;
 import com.androb.androidrobot.messageUtil.MessageService;
 
-import org.json.JSONObject;
-
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -103,10 +98,9 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     private String jsonResult;
 
     // Bluetooth transfer
-    private BluetoothDevice btDevice;
-
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = BluetoothDeviceSingleton.getInstance();
+//    private BluetoothMsgUtil btMsgUtil = new BluetoothMsgUtil();
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,8 +119,8 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
 //        btSocket = btSingleton.getInstance();
 
-        btDevice = BluetoothDeviceSingleton.getInstance();
-        Toast.makeText(getApplicationContext(), "BTDevice name: " + btDevice.getName(), Toast.LENGTH_SHORT).show();
+//        mmDevice = BluetoothDeviceSingleton.getInstance();
+//        Toast.makeText(getApplicationContext(), "BTDevice name: " + mmDevice.getName(), Toast.LENGTH_SHORT).show();
 
 //        Toast.makeText(getApplicationContext(), btSocket.getClass().toString(), Toast.LENGTH_SHORT).show();
 
@@ -619,34 +613,53 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
             System.out.println("JSONReceiver received jsonResult: " + jsonResult);
 
             Toast.makeText(getApplicationContext(), "JSONReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
-            
+
             this.sendBtMsg(jsonResult);
+//            btMsgUtil.sendMsg(jsonResult);
 
             Toast.makeText(getApplicationContext(), "after sendBtMsg", Toast.LENGTH_SHORT).show();
 
         }
 
         public void sendBtMsg(String msg2send) {
-            //UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805f9b34fb"); //Standard SerialPortService ID
-            UUID uuid = UUID.fromString("db764ac8-4b08-7f25-aafe-59d03c27bae3"); //Standard SerialPortService ID
-            try {
 
-                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+            try {
+//                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+                try {
+                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                } catch (InvocationTargetException e) {
+                    e.printStackTrace();
+                } catch (NoSuchMethodException e) {
+                    e.printStackTrace();
+                }
+
+                Toast.makeText(getApplicationContext(), "getting mmSocket: " + mmSocket.toString(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), "mmSocket CONNECTED??: " + mmSocket.isConnected(), Toast.LENGTH_SHORT).show();
+
                 if (!mmSocket.isConnected()) {
-                    mmSocket.connect();
+                    mmSocket.connect(); // this!!!
+                    Toast.makeText(getApplicationContext(), "mmSocket.connect()", Toast.LENGTH_SHORT).show();
                 }
 
                 String msg = msg2send;
-                //msg += "\n";
+                msg += "\n";
                 OutputStream mmOutputStream = mmSocket.getOutputStream();
                 mmOutputStream.write(msg.getBytes());
 
+                Toast.makeText(getApplicationContext(), "SENDING THE MSG", Toast.LENGTH_SHORT).show();
+
+//                mmSocket.close();
+
             } catch (IOException e) {
-                // TODO Auto-generated catch block
+//                 TODO Auto-generated catch block
+                Toast.makeText(getApplicationContext(), "in catch EXCEPTION: " + e.toString(), Toast.LENGTH_SHORT).show();
                 e.printStackTrace();
             }
 
         }
+
     }
 
 

@@ -8,8 +8,6 @@ import android.support.annotation.Nullable;
 import android.util.Log;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.connectionUtil.BluetoothService;
-import com.androb.androidrobot.connectionUtil.BluetoothSocketSingleton;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -52,7 +50,7 @@ public class MessageService extends Service {
 
     private JSONObject jsonResult;
 
-    private BluetoothSocketSingleton btSingleton;
+//    private BluetoothSocketSingleton btSingleton;
     private BluetoothSocket btSocket;
 
 
@@ -73,7 +71,7 @@ public class MessageService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
 
-        Intent btIntent = new Intent(this, BluetoothService.class);
+//        Intent btIntent = new Intent(this, BluetoothService.class);
 
         System.out.println("MessageService onStartCommand invoke");
 
@@ -246,6 +244,8 @@ public class MessageService extends Service {
 
                     String param = curSplitStr[1].split("\\(")[1];
 
+                    param = param.substring(0, param.length() - 1);
+
                     System.out.println("action: " + action);
 
                     this.switchActionforGraph(action, param, graphJson);
@@ -259,14 +259,17 @@ public class MessageService extends Service {
             case 2:
 
                 for(String curStr : strs) {
-                    String curSplitStr[] = curStr.split(".");
+                    String curSplitStr[] = curStr.split("\\.");
                     String action = curSplitStr[1].split("\\(")[0];
 
                     String param = curSplitStr[1].split("\\(")[1];
 
+                    param = param.substring(0, param.length() - 1);
+
                     this.switchActionforGraph(action, param, graphJson);
 
                 }
+                break;
 
             case 3:
 
@@ -281,10 +284,12 @@ public class MessageService extends Service {
                 JSONObject innerRepeat = new JSONObject();
 
                 for(String curStr : newstrs) {
-                    String curSplitStr[] = curStr.split(".");
+                    String curSplitStr[] = curStr.split("\\.");
                     String action = curSplitStr[1].split("\\(")[0];
 
                     String param = curSplitStr[1].split("\\(")[1];
+
+                    param = param.substring(0, param.length() - 1);
 
                     this.switchActionforGraph(action, param, innerRepeat);
                 }
@@ -306,7 +311,7 @@ public class MessageService extends Service {
                     System.arraycopy(strs, 1, newstrs4, 0, newstrs4.length);
 
                     for(String curStr : newstrs4) {
-                        String curSplitStr[] = curStr.split(".");
+                        String curSplitStr[] = curStr.split("\\.");
                         String action = curSplitStr[1].split("\\(")[0];
 
                         String param = curSplitStr[1].split("\\(")[1];
@@ -396,9 +401,9 @@ public class MessageService extends Service {
                 System.out.println("RepeatActionJson: " + repeatActionJson);
 
                 JSONObject repeatFinalJson = new JSONObject();
-                repeatFinalJson.put("" + repeatTimes, repeatActionJson.toString());
+                repeatFinalJson.put("" + repeatTimes, repeatActionJson);
 
-                dragJson.put(CAR_REPEAT + "", repeatFinalJson.toString());
+                dragJson.put(CAR_REPEAT + "", repeatFinalJson);
 
                 break;
             }
@@ -447,19 +452,19 @@ public class MessageService extends Service {
         return baseJson;
     }
 
-    private boolean transferMsg(String msg) {
-        boolean result = false;
-        btSingleton = new BluetoothSocketSingleton();
-        btSocket = btSingleton.getInstance();
-
-        try {
-            btSocket.connect();
-
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-
-        return result;
-    }
+//    private boolean transferMsg(String msg) {
+//        boolean result = false;
+//        btSingleton = new BluetoothSocketSingleton();
+//        btSocket = btSingleton.getInstance();
+//
+//        try {
+//            btSocket.connect();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return result;
+//    }
 
 }

@@ -1,4 +1,4 @@
-package com.androb.androidrobot;
+package com.androb.androidrobot.userManagement;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
@@ -11,6 +11,9 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.androb.androidrobot.CollegeStuMainActivity;
+import com.androb.androidrobot.R;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -25,11 +28,11 @@ public class RegisterActivity extends AppCompatActivity {
     private static final String TAG = "SignupActivity";
 
     @BindView(R.id.input_name) EditText _nameText;
-    @BindView(R.id.input_email) EditText _emailText;
     @BindView(R.id.input_password) EditText _passwordText;
     @BindView(R.id.btn_signup) Button _signupButton;
     @BindView(R.id.link_login) TextView _loginLink;
-
+    @BindView(R.id.link_back_from_register)
+    TextView _returnHomeLink;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -48,7 +51,19 @@ public class RegisterActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 // Finish the registration screen and return to the Login activity
-                finish();
+//                finish();
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+
+        _returnHomeLink.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // Start the Signup activity
+                Intent intent = new Intent(getApplicationContext(), CollegeStuMainActivity.class);
+                startActivity(intent);
             }
         });
     }
@@ -70,7 +85,6 @@ public class RegisterActivity extends AppCompatActivity {
         progressDialog.show();
 
         String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         // TODO: Implement your own signup logic here.
@@ -104,7 +118,6 @@ public class RegisterActivity extends AppCompatActivity {
         boolean valid = true;
 
         String name = _nameText.getText().toString();
-        String email = _emailText.getText().toString();
         String password = _passwordText.getText().toString();
 
         if (name.isEmpty() || name.length() < 3) {
@@ -112,13 +125,6 @@ public class RegisterActivity extends AppCompatActivity {
             valid = false;
         } else {
             _nameText.setError(null);
-        }
-
-        if (email.isEmpty() || !android.util.Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-            _emailText.setError("enter a valid email address");
-            valid = false;
-        } else {
-            _emailText.setError(null);
         }
 
         if (password.isEmpty() || password.length() < 4 || password.length() > 10) {

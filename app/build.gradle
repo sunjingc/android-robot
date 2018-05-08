@@ -34,6 +34,7 @@ dependencies {
     compile "com.jakewharton:butterknife:$BUTTER_KNIFE_VERSION"
     annotationProcessor "com.jakewharton:butterknife-compiler:$BUTTER_KNIFE_VERSION"
     compile 'com.android.support:recyclerview-v7:27.1.0'
+    compile 'com.android.volley:volley:1.1.0'
 
 }
 

@@ -7,12 +7,13 @@ import android.view.View;
 import android.widget.Button;
 
 import com.androb.androidrobot.connectionUtil.BluetoothDiscoverActivity;
-import com.androb.androidrobot.dragAndDrop.DragTestActivity;
 
 
 import com.androb.androidrobot.dragMode.DragModeStartActivity;
 import com.androb.androidrobot.graphMode.GraphModeStartActivity;
 import com.androb.androidrobot.codeMode.CodeModeStartActivity;
+import com.androb.androidrobot.userManagement.LoginActivity;
+import com.androb.androidrobot.userManagement.RegisterActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -31,6 +32,12 @@ public class CollegeStuMainActivity extends AppCompatActivity {
     Button _dragModeButton;
     @BindView(R.id.bluetooth_btn)
     Button _bluetoothButton;
+
+    @BindView(R.id.home_login_btn)
+    Button _loginButton;
+    @BindView(R.id.home_register_btn)
+    Button _registerButton;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -69,6 +76,23 @@ public class CollegeStuMainActivity extends AppCompatActivity {
                 startActivity(intent);
             }
         });
+
+
+        _loginButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), LoginActivity.class);
+                startActivity(intent);
+            }
+        });
+        _registerButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getApplicationContext(), RegisterActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
 }

@@ -2,6 +2,9 @@
 <resources>
     <string name="d_ans_1">{"1":"4","2":"90","0":"3"}</string>
     <string name="d_ans_2">{"1":"2","4":"3","5":"1"}</string>
-    <string name="d_ans_3">让小车沿着一个边长为5米的正方形运动 </string>
-    <string name="d_ans_4">先让小车后退6米，再唱5遍歌 </string>
+    <string name="d_ans_3_1">{"10":"{"4":"{"1":"5","2":"90"}"}"}</string>
+    <string name="d_ans_3_2">{"10":"{"4":"{"1":"5","3":"90"}"}"}</string>
+    <string name="d_ans_3_3">{"10":"{"4":"{"2":"90","1":"5"}"}"}</string>
+    <string name="d_ans_3_4">{"10":"{"4":"{"3":"90","1":"5"}"}"}</string>
+    <string name="d_ans_4">{"0":"6","10":"{"5":"{"5":"1"}"}"}</string>
 </resources>

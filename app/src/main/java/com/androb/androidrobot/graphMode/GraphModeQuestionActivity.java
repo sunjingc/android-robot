@@ -695,7 +695,55 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
             jsonResult = intent.getStringExtra("json");
 
             System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
+
+
+            if(checkAnswer(jsonResult) == true){
+                Toast.makeText(GraphModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+            }
+            else {
+                Toast.makeText(GraphModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+            }
         }
+
+        private boolean checkAnswer(String answer) {
+            boolean result = false;
+            switch(questionId) {
+                case 1:
+                    System.out.println("in case 1: " + answer + "   real ans: " + R.string.g_ans_1);
+                    if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
+                        System.out.println("true");
+                        result = true;
+                    } else {
+                        System.out.println("false");
+                        result = false;
+                    }
+                    break;
+                case 2:
+                    if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
+                        result = true;
+                    } else {
+                        result = false;
+                    }
+                    break;
+                case 3:
+                    if (answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"2\":\"90\"}}}") || answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"3\":\"90\"}}}")
+                            || answer.equals("{\"10\":{\"4\":{\"2\":\"90\",\"1\":\"5\"}}}") || answer.equals("{\"10\":{\"4\":{\"3\":\"90\",\"1\":\"5\"}}}")) {
+                        result = true;
+                    } else {
+                        result = false;
+                    }
+                    break;
+                case 4:
+                    if (answer.equals("{}") || answer.equals("{\"1\":\"10\"}")) {
+                        result = true;
+                    } else {
+                        result = false;
+                    }
+                    break;
+            }
+            return result;
+        }
+
     }
 
 
@@ -754,5 +802,6 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
 
         return  isImgValid;
     }
+
 
 }
