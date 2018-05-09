@@ -13,6 +13,18 @@ public class User {
     int score;
     Date sessionExpiryDate;
 
+    public User(String uname, String sc) {
+        System.out.println("in User, score: " + sc);
+        this.username = uname;
+        if(!sc.equals("null")) {
+            this.score = Integer.valueOf(sc);
+        }
+        else {
+            this.score = 0;
+        }
+
+    }
+
     public void setUsername(String username) {
         this.username = username;
     }

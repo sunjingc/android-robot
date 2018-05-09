@@ -16,12 +16,23 @@ import com.androb.androidrobot.CollegeStuMainActivity;
 import com.androb.androidrobot.R;
 
 import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 //import butterknife.InjectView;
 import butterknife.BindView;
 
+import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
+import com.android.volley.RequestQueue;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.JsonObjectRequest;
+import com.android.volley.toolbox.StringRequest;
+import com.android.volley.toolbox.Volley;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 
 /**
@@ -33,8 +44,16 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     private static final int REQUEST_SIGNUP = 0;
 
     private HashMap<String, String> loginData = new HashMap<>();
-    private String login_url = "http://127.0.0.1:8888/api/member/login.php";
+    private static final String KEY_STATUS = "status";
+    private static final String KEY_MESSAGE = "message";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_PASSWORD = "password";
+    private static final String KEY_APICALL = "apicall";
 
+    private RequestQueue requestQueue;
+
+    private String username;
+    private String password;
 
     @BindView(R.id.input_uname)
     EditText _unameText;
@@ -47,19 +66,14 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     @BindView(R.id.link_back_from_login)
     TextView _returnHomeLink;
 
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.login_layout);
         ButterKnife.bind(this);
 
-        _loginButton.setOnClickListener(new View.OnClickListener() {
-
-            @Override
-            public void onClick(View v) {
-                login();
-            }
-        });
+        _loginButton.setOnClickListener(this);
 
         _signupLink.setOnClickListener(new View.OnClickListener() {
 
@@ -80,42 +94,81 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                 startActivity(intent);
             }
         });
+
+        requestQueue = Volley.newRequestQueue(LoginActivity.this);
     }
 
     public void login() {
         Log.d(TAG, "Login");
 
-        if (!emptyValidate(_unameText, _passwordText)) {
-            onLoginFailed();
-            return;
-        }
+//        JSONObject request = new JSONObject();
+//        try {
+//            //Populate the request parameters
+//            request.put(KEY_APICALL, "login");
+//            request.put(KEY_USERNAME, username);
+//            request.put(KEY_PASSWORD, password);
+//
+//        } catch (JSONException e) {
+//            e.printStackTrace();
+//        }
 
-        _loginButton.setEnabled(false);
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.URL_LOGIN,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-        final ProgressDialog progressDialog = new ProgressDialog(LoginActivity.this,
-                R.style.Theme_AppCompat_DayNight_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Authenticating...");
-        progressDialog.show();
+                        Log.d(TAG, "onResponse");
 
-        String email = _unameText.getText().toString();
-        String password = _passwordText.getText().toString();
+                        try {
+                            //converting response to json object
+                            System.out.println("respo: " + response);
+                            JSONObject obj = new JSONObject(response);
 
-        // TODO: Implement your own authentication logic here.
-        if (email.equals("a@a.com") && password.equals("1234")) {
-                Intent intent = new Intent(getApplicationContext(), CollegeStuMainActivity.class);
-                startActivity(intent);
-        }
+                            //if no error in response
+                            if (!obj.getBoolean("error")) {
+                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onLoginSuccess or onLoginFailed
-                        onLoginSuccess();
-                        // onLoginFailed();
-                        progressDialog.dismiss();
+                                //getting the user from the response
+                                JSONObject userJson = obj.getJSONObject("user");
+
+                                //creating a new user object
+                                User user = new User(
+                                        userJson.getString("username"),
+                                        userJson.getString("score")
+                                );
+
+                                //storing the user in shared preferences
+                                SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+
+                                //starting the profile activity
+                                finish();
+                                startActivity(new Intent(getApplicationContext(), CollegeStuMainActivity.class));
+                            } else {
+                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, 3000);
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put(KEY_APICALL, "login");
+                params.put(KEY_USERNAME, username);
+                params.put(KEY_PASSWORD, password);
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
+        Log.d(TAG, "After VolleySingleton, add to queue");
     }
 
 
@@ -148,9 +201,9 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
         _loginButton.setEnabled(true);
     }
 
-    private boolean emptyValidate(EditText etName, EditText etPassword){
-        String name = etName.getText().toString();
-        String password = etPassword.getText().toString();
+    private boolean emptyValidate(){
+        String name = _unameText.getText().toString();
+        String password = _passwordText.getText().toString();
         return (name.isEmpty() && password.isEmpty());
     }
 
@@ -159,7 +212,22 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
 
         switch (view.getId()) {
             case R.id.btn_login:
+                //Retrieve the data entered in the edit texts
+                username = _unameText.getText().toString().toLowerCase().trim();
+                password = _passwordText.getText().toString().trim();
 
+                System.out.println("in onClick, btn_login");
+
+//                Toast.makeText(getApplicationContext(), "Before login() " + username, Toast.LENGTH_SHORT).show();
+
+                if (!emptyValidate()) {
+                    System.out.println("after emptyValidate");
+
+                    login();
+
+                    System.out.println("after login()");
+
+                }
 
                 break;
         }

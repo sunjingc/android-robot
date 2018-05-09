@@ -2,6 +2,7 @@
     <string name="app_name">AndroidRobot</string>
     <string name="login">Login</string>
     <string name="register">Register</string>
+    <string name="logout">Logout</string>
 
     <!--College Student-->
     <string name="college_mode_code">编程模式</string>

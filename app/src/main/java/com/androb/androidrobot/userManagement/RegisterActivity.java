@@ -14,6 +14,17 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.CollegeStuMainActivity;
 import com.androb.androidrobot.R;
+import com.android.volley.AuthFailureError;
+import com.android.volley.Request;
+import com.android.volley.Response;
+import com.android.volley.VolleyError;
+import com.android.volley.toolbox.StringRequest;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import butterknife.ButterKnife;
 import butterknife.BindView;
@@ -24,8 +35,15 @@ import butterknife.BindView;
  */
 
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends AppCompatActivity implements View.OnClickListener {
+
     private static final String TAG = "SignupActivity";
+    private static final String KEY_USERNAME = "username";
+    private static final String KEY_PASSWORD = "password";
+    private static final String KEY_APICALL = "apicall";
+
+    private String username;
+    private String password;
 
     @BindView(R.id.input_name) EditText _nameText;
     @BindView(R.id.input_password) EditText _passwordText;
@@ -40,12 +58,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.register_layout);
         ButterKnife.bind(this);
 
-        _signupButton.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                signup();
-            }
-        });
+        _signupButton.setOnClickListener(this);
 
         _loginLink.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -78,27 +91,62 @@ public class RegisterActivity extends AppCompatActivity {
 
         _signupButton.setEnabled(false);
 
-        final ProgressDialog progressDialog = new ProgressDialog(RegisterActivity.this,
-                R.style.Theme_AppCompat_DayNight_Dialog);
-        progressDialog.setIndeterminate(true);
-        progressDialog.setMessage("Creating Account...");
-        progressDialog.show();
+        StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.URL_REGISTER,
+                new Response.Listener<String>() {
+                    @Override
+                    public void onResponse(String response) {
 
-        String name = _nameText.getText().toString();
-        String password = _passwordText.getText().toString();
+                        Log.d(TAG, "onResponse");
 
-        // TODO: Implement your own signup logic here.
+                        try {
+                            //converting response to json object
+                            System.out.println("respo: " + response);
+                            JSONObject obj = new JSONObject(response);
 
-        new android.os.Handler().postDelayed(
-                new Runnable() {
-                    public void run() {
-                        // On complete call either onSignupSuccess or onSignupFailed
-                        // depending on success
-                        onSignupSuccess();
-                        // onSignupFailed();
-                        progressDialog.dismiss();
+                            //if no error in response
+                            if (!obj.getBoolean("error")) {
+                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+
+                                //getting the user from the response
+                                JSONObject userJson = obj.getJSONObject("user");
+
+                                //creating a new user object
+                                User user = new User(
+                                        userJson.getString("username"),
+                                        userJson.getString("score")
+                                );
+
+                                //storing the user in shared preferences
+                                SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+
+                                //starting the profile activity
+                                finish();
+                                startActivity(new Intent(getApplicationContext(), CollegeStuMainActivity.class));
+                            } else {
+                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+                            }
+                        } catch (JSONException e) {
+                            e.printStackTrace();
+                        }
                     }
-                }, 3000);
+                },
+                new Response.ErrorListener() {
+                    @Override
+                    public void onErrorResponse(VolleyError error) {
+                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                }) {
+            @Override
+            protected Map<String, String> getParams() throws AuthFailureError {
+                Map<String, String> params = new HashMap<>();
+                params.put(KEY_APICALL, "register");
+                params.put(KEY_USERNAME, username);
+                params.put(KEY_PASSWORD, password);
+                return params;
+            }
+        };
+
+        VolleySingleton.getInstance(this).addToRequestQueue(stringRequest);
     }
 
 
@@ -127,13 +175,36 @@ public class RegisterActivity extends AppCompatActivity {
             _nameText.setError(null);
         }
 
-        if (password.isEmpty() || password.length() < 4 || password.length() > 10) {
-            _passwordText.setError("between 4 and 10 alphanumeric characters");
+        if (password.isEmpty() || password.length() < 3 || password.length() > 10) {
+            _passwordText.setError("between 3 and 10 alphanumeric characters");
             valid = false;
         } else {
             _passwordText.setError(null);
         }
 
         return valid;
+    }
+
+    @Override
+    public void onClick(View view) {
+        switch (view.getId()) {
+            case R.id.btn_signup:
+                //Retrieve the data entered in the edit texts
+                username = _nameText.getText().toString().toLowerCase().trim();
+                password = _passwordText.getText().toString().trim();
+
+                System.out.println("in onClick, btn_login");
+
+//                Toast.makeText(getApplicationContext(), "Before login() " + username, Toast.LENGTH_SHORT).show();
+
+                if (!(username.isEmpty() || password.isEmpty())) {
+                    signup();
+
+                    System.out.println("after login()");
+
+                }
+
+                break;
+        }
     }
 }
