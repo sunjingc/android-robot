@@ -1,6 +1,5 @@
 package com.androb.androidrobot.userManagement;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -27,7 +26,6 @@ import com.android.volley.Request;
 import com.android.volley.RequestQueue;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
-import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.StringRequest;
 import com.android.volley.toolbox.Volley;
 
@@ -101,27 +99,13 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
     public void login() {
         Log.d(TAG, "Login");
 
-//        JSONObject request = new JSONObject();
-//        try {
-//            //Populate the request parameters
-//            request.put(KEY_APICALL, "login");
-//            request.put(KEY_USERNAME, username);
-//            request.put(KEY_PASSWORD, password);
-//
-//        } catch (JSONException e) {
-//            e.printStackTrace();
-//        }
-
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.URL_LOGIN,
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
 
-                        Log.d(TAG, "onResponse");
-
                         try {
                             //converting response to json object
-                            System.out.println("respo: " + response);
                             JSONObject obj = new JSONObject(response);
 
                             //if no error in response
@@ -138,7 +122,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 );
 
                                 //storing the user in shared preferences
-                                SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+                                SharedUserManager.getInstance(getApplicationContext()).userLogin(user);
 
                                 //starting the profile activity
                                 finish();

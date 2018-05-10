@@ -10,6 +10,7 @@
     <string name="college_mode_drag">拖拽模式</string>
 
     <string name="bluetooth_setting">蓝牙设置</string>
+    <string name="view_profile">我的账号</string>
 
     <string name="drag_help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
                             旋转：Car.rotate(方向：right/left, 角度/deg)\n

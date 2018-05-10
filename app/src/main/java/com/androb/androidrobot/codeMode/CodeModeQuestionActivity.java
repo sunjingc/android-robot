@@ -18,7 +18,9 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.dragMode.DragModeQuestionActivity;
 import com.androb.androidrobot.messageUtil.MessageService;
+import com.androb.androidrobot.userManagement.SharedUserManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -57,6 +59,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 
     private String jsonResult;
     private JSONReceiver receiver;
+    private boolean isLoggedin;
 
     // 处理输入格式
 //    private MessageService msgService;
@@ -103,6 +106,8 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         codeInputText.setText("");
         mSpansManager = new SpansManager(this, codeInputText, etInput);
         mSpansManager.doFillBlank(mTestStr);
+
+        isLoggedin = SharedUserManager.getInstance(this).isLoggedIn();
 
         receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
@@ -274,8 +279,56 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 
             jsonResult = intent.getStringExtra("json");
 
+            if(checkAnswer(jsonResult) == true){
+                Toast.makeText(CodeModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+                if(isLoggedin) {
+                    SharedUserManager.getInstance(context).updateScore();
+                }
+            }
+            else {
+                Toast.makeText(CodeModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+            }
+
             System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
         }
+    }
+
+    private boolean checkAnswer(String answer) {
+        boolean result = false;
+        switch(questionId) {
+            case 1:
+                if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
+                    System.out.println("true");
+                    result = true;
+                } else {
+                    System.out.println("false");
+                    result = false;
+                }
+                break;
+            case 2:
+                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+            case 3:
+                if (answer.equals("{\"10\":{\"5\":{\"1\":\"2\",\"4\":\"3\"}}}")) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+            case 4:
+                if ( (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"3\":\"90\"}}}"))
+                        || (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"2\":\"90\"}}}")) ) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+        }
+        return result;
     }
 
 }

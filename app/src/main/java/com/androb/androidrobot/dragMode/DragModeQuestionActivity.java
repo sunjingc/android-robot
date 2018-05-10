@@ -13,6 +13,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.DragEvent;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
@@ -25,7 +26,9 @@ import android.widget.Toast;
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.connectionUtil.BluetoothDeviceSingleton;
 import com.androb.androidrobot.connectionUtil.BluetoothMsgUtil;
+import com.androb.androidrobot.graphMode.GraphModeQuestionActivity;
 import com.androb.androidrobot.messageUtil.MessageService;
+import com.androb.androidrobot.userManagement.SharedUserManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
@@ -42,6 +45,9 @@ import butterknife.ButterKnife;
  */
 
 public class DragModeQuestionActivity extends AppCompatActivity implements View.OnDragListener, View.OnLongClickListener, View.OnClickListener {
+
+    @BindView(R.id.starting_point)
+    Button btnStart;
 
     @BindView(R.id.drag_btn_forward)
     Button btnForward;
@@ -90,12 +96,21 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     private int singChoice = 0;
     private int repeatChoice = 0;
 
+    // 是否要开始缩进
+    private int REPEAT_FLAG = 0;
+
     private List<String> answerStrList = new ArrayList<>();
 
     private AlertDialog.Builder builder;
 
     private JSONReceiver receiver;
     private String jsonResult;
+    private boolean isLoggedin;
+
+    // standard left value
+    private int standardWidth;
+    private int standardHeight;
+    private int standardWeight;
 
     // Bluetooth transfer
     BluetoothSocket mmSocket;
@@ -124,11 +139,15 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
 //        Toast.makeText(getApplicationContext(), btSocket.getClass().toString(), Toast.LENGTH_SHORT).show();
 
+        standardHeight = btnForward.getLayoutParams().height;
+        standardWidth = btnForward.getLayoutParams().width;
+
+        isLoggedin = SharedUserManager.getInstance(this).isLoggedIn();
+
         receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
         registerReceiver(receiver, filter);
-
     }
 
     private void initView() {
@@ -214,17 +233,12 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     public boolean onDrag(View view, DragEvent event) {
         final int action = event.getAction();
 
-//        System.out.println("in onDrag before switch");
-
         switch (action) {
-
             case DragEvent.ACTION_DRAG_STARTED: // 拖拽开始
                 // Determines if this View can accept the dragged data
                 if (event.getClipDescription().hasMimeType(ClipDescription.MIMETYPE_TEXT_PLAIN)) {
-//                    System.out.println("in true");
                     return true;
                 }
-//                System.out.println("in false");
                 return false;
 
             case DragEvent.ACTION_DRAG_ENTERED: // 被拖拽View进入目标区域
@@ -241,10 +255,9 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
             case DragEvent.ACTION_DROP: // 放开被拖拽View
 
-                System.out.println("in ACTION_DROP");
-
                 // Gets the item containing the dragged data
                 ClipData.Item item = event.getClipData().getItemAt(0);
+
                 // Gets the text data from the item.
                 String dragData = item.getText().toString();
                 // Displays a message containing the dragged data.
@@ -256,9 +269,61 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
                 ViewGroup owner = (ViewGroup) vw.getParent();
                 owner.removeView(vw); //remove the dragged view
 
+//                Toast.makeText(this, "Id??  " + vw.getId(), Toast.LENGTH_SHORT).show();
+
+                int tempId = vw.getId();
+
                 //caste the view into LinearLayout as our drag acceptable layout is LinearLayout
                 LinearLayout container = (LinearLayout) view;
                 container.addView(vw);//Add the dragged view
+
+                switch(tempId) {
+                    case R.id.drag_btn_end:
+                        if(owner.getId() == R.id.btns_layout) {
+                            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(btnStart.getLayoutParams().width, btnStart.getLayoutParams().height);
+                            param.gravity = Gravity.CENTER;
+                            vw.setLayoutParams(param);
+                        }
+                        else {
+                            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(standardWidth, standardHeight);
+                            param.gravity = Gravity.CENTER;
+                            vw.setLayoutParams(param);
+                        }
+                        break;
+                    case R.id.drag_btn_repeat:
+                        if(owner.getId() == R.id.btns_layout) {
+                            REPEAT_FLAG = 1;
+                        }
+                        else {
+                            REPEAT_FLAG = 0;
+                        }
+
+                        break;
+                    default:
+                        System.out.println("REPEAT_FLAG:  " + REPEAT_FLAG);
+                        if(owner.getId() == R.id.btns_layout) {
+                            if(REPEAT_FLAG == 1) {
+                                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(btnForward.getLayoutParams().width - 120, btnForward.getLayoutParams().height,((LinearLayout.LayoutParams) btnForward.getLayoutParams()).weight);
+                                param.gravity = Gravity.CENTER;
+                                vw.setLayoutParams(param);
+                            }
+                        }
+                        else {
+                            LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(standardWidth, standardHeight);
+                            param.gravity = Gravity.CENTER;
+                            vw.setLayoutParams(param);
+                        }
+                        break;
+
+                }
+
+//                if((REPEAT_FLAG == 1) && (vw.getId() != R.id.drag_btn_repeat) && (vw.getId() != R.id.drag_btn_end) && (owner.getId() == R.id.answer_layout)){
+//
+//                }
+//                else if((REPEAT_FLAG == 0) && (owner.getId() != R.id.answer_layout)) {
+//
+//                }
+
                 vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
                 // Returns true. DragEvent.getResult() will return true.
                 return true;
@@ -616,6 +681,15 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
             this.sendBtMsg(jsonResult);
 //            btMsgUtil.sendMsg(jsonResult);
+            if(checkAnswer(jsonResult) == true){
+                Toast.makeText(DragModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+                if(isLoggedin) {
+                    SharedUserManager.getInstance(context).updateScore();
+                }
+            }
+            else {
+                Toast.makeText(DragModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+            }
 
             Toast.makeText(getApplicationContext(), "after sendBtMsg", Toast.LENGTH_SHORT).show();
 
@@ -662,5 +736,42 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
     }
 
+    private boolean checkAnswer(String answer) {
+        boolean result = false;
+        switch(quesId) {
+            case 1:
+                if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
+                    System.out.println("true");
+                    result = true;
+                } else {
+                    System.out.println("false");
+                    result = false;
+                }
+                break;
+            case 2:
+                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+            case 3:
+                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}") || answer.equals("{\"10\":\"{\"4\":\"{\"1\":\"5\",\"3\":\"90\"}\"}\"}")
+                        || answer.equals("{\"10\":\"{\"4\":\"{\"2\":\"90\",\"1\":\"5\"}\"}\"}") || answer.equals("{\"10\":\"{\"4\":\"{\"3\":\"90\",\"1\":\"5\"}\"}\"}")) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+            case 4:
+                if (answer.equals("{\"0\":\"6\",\"10\":\"{\"5\":\"{\"5\":\"1\"}\"}\"}")) {
+                    result = true;
+                } else {
+                    result = false;
+                }
+                break;
+        }
+        return result;
+    }
 
 }

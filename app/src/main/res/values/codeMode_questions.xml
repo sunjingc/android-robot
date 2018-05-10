@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="c_ques_1">让小车前进4米，右转90°，再后退3米 </string>
-    <string name="c_code_1">Car.____(____);\nCar.rotate(____, ____);\nCar.backward(____);</string>
+    <string name="c_code_1">public static void&#10; main(String[] args){\n\n&#160;&#160;&#160;&#160;Car.____(____);\n&#160;&#160;&#160;&#160;Car.rotate(____, ____);\n&#160;&#160;&#160;&#160;Car.backward(____);&#x000D;}</string>
 
     <string name="c_ques_2">让小车前进2米，暂停3秒之后，唱一首歌 </string>
     <string name="c_code_2">Car.forward(____);\nCar.____(____);\nCar.____(____);</string>

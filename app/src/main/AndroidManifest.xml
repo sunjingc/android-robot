@@ -10,28 +10,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
 
-        <!--LoginActivity-->
-        <!--<activity android:name=".dragAndDrop.DragActivity"-->
-            <!--android:screenOrientation="landscape"-->
-            <!--android:configChanges="keyboardHidden|orientation|screenSize">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
-        <!--<activity android:name=".connectionUtil.BluetoothDiscoverActivity"-->
-            <!--android:screenOrientation="landscape"-->
-            <!--android:configChanges="keyboardHidden|orientation|screenSize">-->
-            <!--<intent-filter>-->
-                <!--<action android:name="android.intent.action.MAIN" />-->
-
-                <!--<category android:name="android.intent.category.LAUNCHER" />-->
-            <!--</intent-filter>-->
-        <!--</activity>-->
-
-        <activity android:name=".CollegeStuMainActivity"
+        <activity android:name=".userManagement.StartActivity"
             android:screenOrientation="landscape"
             android:configChanges="keyboardHidden|orientation|screenSize">
             <intent-filter>
@@ -41,9 +20,21 @@
             </intent-filter>
         </activity>
 
+
+        <!--<activity android:name=".codeMode.CodeModeStartActivity"-->
+            <!--android:screenOrientation="landscape"-->
+            <!--android:configChanges="keyboardHidden|orientation|screenSize">-->
+            <!--<intent-filter>-->
+                <!--<action android:name="android.intent.action.MAIN" />-->
+
+                <!--<category android:name="android.intent.category.LAUNCHER" />-->
+            <!--</intent-filter>-->
+        <!--</activity>-->
+
+        <activity android:name=".CollegeStuMainActivity" />
+
         <activity android:name=".userManagement.RegisterActivity" />
         <activity android:name=".userManagement.LoginActivity" />
-        <!--<activity android:name=".CollegeStuMainActivity" />-->
 
         <activity android:name=".codeMode.CodeModeStartActivity"
             android:screenOrientation="landscape"/>
@@ -54,7 +45,7 @@
 
 
         <activity android:name=".codeMode.CodeModeQuestionActivity"
-            android:screenOrientation="portrait"/>
+            android:screenOrientation="landscape"/>
 
         <activity android:name=".graphMode.GraphModeQuestionActivity"
             android:screenOrientation="landscape"/>
@@ -70,7 +61,7 @@
         <activity android:name=".connectionUtil.BluetoothDiscoverActivity"
             android:screenOrientation="portrait"/>
 
-
+        <activity android:name=".userManagement.ProfileActivity" />
 
         <!--Services-->
         <!--<service android:name=".connectionUtil.BluetoothService" />-->

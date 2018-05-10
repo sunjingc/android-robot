@@ -49,8 +49,8 @@ public class User {
         return password;
     }
 
-    public int getScore() {
-        return score;
+    public String getScore() {
+        return score + "";
     }
 
     public Date getSessionExpiryDate() {

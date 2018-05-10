@@ -1,6 +1,5 @@
 package com.androb.androidrobot.userManagement;
 
-import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -117,7 +116,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 );
 
                                 //storing the user in shared preferences
-                                SharedPrefManager.getInstance(getApplicationContext()).userLogin(user);
+                                SharedUserManager.getInstance(getApplicationContext()).userLogin(user);
 
                                 //starting the profile activity
                                 finish();

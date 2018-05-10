@@ -36,11 +36,28 @@ dependencies {
     compile 'com.android.support:recyclerview-v7:27.1.0'
     compile 'com.android.volley:volley:1.1.0'
 
+//    // Litho
+//    implementation 'com.facebook.litho:litho-core:0.14.0'
+//    implementation 'com.facebook.litho:litho-widget:0.14.0'
+//    compileOnly 'com.facebook.litho:litho-annotations:0.14.0'
+//
+//    annotationProcessor 'com.facebook.litho:litho-processor:0.14.0'
+//
+//    // SoLoader
+//    implementation 'com.facebook.soloader:soloader:0.2.0'
+//
+//    // For integration with Fresco
+//    implementation 'com.facebook.litho:litho-fresco:0.14.0'
+//
+//    // For testing
+//    testImplementation 'com.facebook.litho:litho-testing:0.14.0'
+
 }
 
 buildscript {
     repositories {
         mavenCentral()
+//        jcenter()
     }
     dependencies {
         classpath 'com.jakewharton:butterknife-gradle-plugin:8.5.1'

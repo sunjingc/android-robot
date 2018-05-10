@@ -26,6 +26,8 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.messageUtil.MessageService;
+import com.androb.androidrobot.userManagement.SharedUserManager;
+import com.androb.androidrobot.userManagement.User;
 
 import org.json.JSONObject;
 
@@ -98,6 +100,9 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     private String jsonResult;
     private JSONReceiver receiver;
 
+    private User curUser;
+    private boolean isLoggedin;
+
 
     // for drawing lines
     private Paint paint = new Paint();
@@ -145,6 +150,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
             default:
                 break;
         }
+
+        isLoggedin = SharedUserManager.getInstance(this).isLoggedIn();
 
         receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
@@ -699,6 +706,9 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
 
             if(checkAnswer(jsonResult) == true){
                 Toast.makeText(GraphModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+                if(isLoggedin) {
+                    SharedUserManager.getInstance(context).updateScore();
+                }
             }
             else {
                 Toast.makeText(GraphModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();

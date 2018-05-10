@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="400dp"
+        android:gravity="center"
+        android:layout_gravity="center"
+        android:layout_marginTop="20dp"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="100dp"
+            android:gravity="center"
+            android:layout_gravity="center"
+            android:text="AndRob" />
+
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/start_login_btn"
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/material_red_700"
+            android:textColor="@color/white"
+            android:text="@string/login" />
+
+        <android.support.v7.widget.AppCompatButton
+            android:id="@+id/start_register_btn"
+            android:layout_width="280dp"
+            android:layout_height="50dp"
+            android:backgroundTint="@color/material_grey_700"
+            android:textColor="@color/white"
+            android:text="@string/register" />
+
+        <TextView android:id="@+id/guest_link"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:text="Use as guest"
+            android:gravity="center"
+            android:textSize="16dip"/>
+
+    </LinearLayout>
+
+</LinearLayout>
