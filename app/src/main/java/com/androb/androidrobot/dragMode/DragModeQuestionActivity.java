@@ -26,16 +26,15 @@ import android.widget.Toast;
 import com.androb.androidrobot.R;
 import com.androb.androidrobot.connectionUtil.BluetoothDeviceSingleton;
 import com.androb.androidrobot.connectionUtil.BluetoothMsgUtil;
-import com.androb.androidrobot.graphMode.GraphModeQuestionActivity;
 import com.androb.androidrobot.messageUtil.MessageService;
-import com.androb.androidrobot.userManagement.SharedUserManager;
+import com.androb.androidrobot.userUtil.QuestionStatusManager;
+import com.androb.androidrobot.userUtil.UserManager;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -112,11 +111,31 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     private int standardHeight;
     private int standardWeight;
 
+    private boolean qStatus = false;
+
     // Bluetooth transfer
     BluetoothSocket mmSocket;
     BluetoothDevice mmDevice = BluetoothDeviceSingleton.getInstance();
-//    private BluetoothMsgUtil btMsgUtil = new BluetoothMsgUtil();
+    private BluetoothMsgUtil btMsgUtil = new BluetoothMsgUtil();
 
+    protected void onStart() {
+        receiver = new JSONReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+        registerReceiver(receiver, filter);
+        qStatus = QuestionStatusManager.getInstance(DragModeQuestionActivity.this).checkQuestionStatus("drag", quesId);
+
+        if(qStatus) {
+            Toast.makeText(DragModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
+        }
+        super.onStart();
+    }
+
+    protected void onDestroy() {
+        unregisterReceiver(receiver);
+
+        super.onDestroy();
+    }
 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -142,7 +161,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         standardHeight = btnForward.getLayoutParams().height;
         standardWidth = btnForward.getLayoutParams().width;
 
-        isLoggedin = SharedUserManager.getInstance(this).isLoggedIn();
+        isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
         receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
@@ -675,16 +694,16 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
             jsonResult = intent.getStringExtra("json");
 
-            System.out.println("JSONReceiver received jsonResult: " + jsonResult);
+            System.out.println("JSONMessageReceiver received jsonResult: " + jsonResult);
 
-            Toast.makeText(getApplicationContext(), "JSONReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
+            Toast.makeText(getApplicationContext(), "JSONMessageReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
 
-            this.sendBtMsg(jsonResult);
-//            btMsgUtil.sendMsg(jsonResult);
+//            this.sendBtMsg(jsonResult);
+            btMsgUtil.sendMsg(jsonResult);
             if(checkAnswer(jsonResult) == true){
                 Toast.makeText(DragModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
                 if(isLoggedin) {
-                    SharedUserManager.getInstance(context).updateScore();
+                    UserManager.getInstance(context).updateScore();
                 }
             }
             else {
@@ -695,44 +714,44 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
         }
 
-        public void sendBtMsg(String msg2send) {
-
-            try {
-//                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-                try {
-                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
-                } catch (IllegalAccessException e) {
-                    e.printStackTrace();
-                } catch (InvocationTargetException e) {
-                    e.printStackTrace();
-                } catch (NoSuchMethodException e) {
-                    e.printStackTrace();
-                }
-
-                Toast.makeText(getApplicationContext(), "getting mmSocket: " + mmSocket.toString(), Toast.LENGTH_SHORT).show();
-                Toast.makeText(getApplicationContext(), "mmSocket CONNECTED??: " + mmSocket.isConnected(), Toast.LENGTH_SHORT).show();
-
-                if (!mmSocket.isConnected()) {
-                    mmSocket.connect(); // this!!!
-                    Toast.makeText(getApplicationContext(), "mmSocket.connect()", Toast.LENGTH_SHORT).show();
-                }
-
-                String msg = msg2send;
-                msg += "\n";
-                OutputStream mmOutputStream = mmSocket.getOutputStream();
-                mmOutputStream.write(msg.getBytes());
-
-                Toast.makeText(getApplicationContext(), "SENDING THE MSG", Toast.LENGTH_SHORT).show();
-
-//                mmSocket.close();
-
-            } catch (IOException e) {
-//                 TODO Auto-generated catch block
-                Toast.makeText(getApplicationContext(), "in catch EXCEPTION: " + e.toString(), Toast.LENGTH_SHORT).show();
-                e.printStackTrace();
-            }
-
-        }
+//        public void sendBtMsg(String msg2send) {
+//
+//            try {
+////                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
+//                try {
+//                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
+//                } catch (IllegalAccessException e) {
+//                    e.printStackTrace();
+//                } catch (InvocationTargetException e) {
+//                    e.printStackTrace();
+//                } catch (NoSuchMethodException e) {
+//                    e.printStackTrace();
+//                }
+//
+//                Toast.makeText(getApplicationContext(), "getting mmSocket: " + mmSocket.toString(), Toast.LENGTH_SHORT).show();
+//                Toast.makeText(getApplicationContext(), "mmSocket CONNECTED??: " + mmSocket.isConnected(), Toast.LENGTH_SHORT).show();
+//
+//                if (!mmSocket.isConnected()) {
+//                    mmSocket.connect(); // this!!!
+//                    Toast.makeText(getApplicationContext(), "mmSocket.connect()", Toast.LENGTH_SHORT).show();
+//                }
+//
+//                String msg = msg2send;
+//                msg += "\n";
+//                OutputStream mmOutputStream = mmSocket.getOutputStream();
+//                mmOutputStream.write(msg.getBytes());
+//
+//                Toast.makeText(getApplicationContext(), "SENDING THE MSG", Toast.LENGTH_SHORT).show();
+//
+////                mmSocket.close();
+//
+//            } catch (IOException e) {
+////                 TODO Auto-generated catch block
+//                Toast.makeText(getApplicationContext(), "in catch EXCEPTION: " + e.toString(), Toast.LENGTH_SHORT).show();
+//                e.printStackTrace();
+//            }
+//
+//        }
 
     }
 

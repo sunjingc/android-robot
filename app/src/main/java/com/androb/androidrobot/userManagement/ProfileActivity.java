@@ -1,7 +1,6 @@
 package com.androb.androidrobot.userManagement;
 
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
@@ -11,6 +10,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.userUtil.User;
+import com.androb.androidrobot.userUtil.UserManager;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -38,9 +39,9 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         setContentView(R.layout.profile_layout);
         ButterKnife.bind(this);
 
-        user = SharedUserManager.getInstance(this).getUser();
+        user = UserManager.getInstance(this).getUser();
 
-        SharedPreferences sharedPref = this.getSharedPreferences("sharedPref", Context.MODE_PRIVATE);
+        SharedPreferences sharedPref = this.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
         int score = Integer.valueOf(sharedPref.getString("score", null));
 
         nameText.setText(sharedPref.getString("username", null));
@@ -63,7 +64,7 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     public void onClick(View view) {
         switch(view.getId()) {
             case R.id.profile_logout_btn:
-                SharedUserManager.getInstance(this).logout();
+                UserManager.getInstance(this).logout();
                 Toast.makeText(this, "logged out", Toast.LENGTH_SHORT).show();
                 break;
         }

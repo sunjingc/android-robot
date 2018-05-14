@@ -13,6 +13,10 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.CollegeStuMainActivity;
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.userUtil.URLs;
+import com.androb.androidrobot.userUtil.User;
+import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.userUtil.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
@@ -116,7 +120,7 @@ public class RegisterActivity extends AppCompatActivity implements View.OnClickL
                                 );
 
                                 //storing the user in shared preferences
-                                SharedUserManager.getInstance(getApplicationContext()).userLogin(user);
+                                UserManager.getInstance(getApplicationContext()).userLogin(user);
 
                                 //starting the profile activity
                                 finish();

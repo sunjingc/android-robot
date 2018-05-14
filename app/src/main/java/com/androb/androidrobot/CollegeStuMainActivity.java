@@ -14,9 +14,9 @@ import com.androb.androidrobot.dragMode.DragModeStartActivity;
 import com.androb.androidrobot.graphMode.GraphModeStartActivity;
 import com.androb.androidrobot.codeMode.CodeModeStartActivity;
 import com.androb.androidrobot.userManagement.ProfileActivity;
-import com.androb.androidrobot.userManagement.SharedUserManager;
+import com.androb.androidrobot.userUtil.UserManager;
 import com.androb.androidrobot.userManagement.StartActivity;
-import com.androb.androidrobot.userManagement.User;
+import com.androb.androidrobot.userUtil.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -96,8 +96,8 @@ public class CollegeStuMainActivity extends AppCompatActivity {
             }
         });
 
-        if(SharedUserManager.getInstance(this).isLoggedIn()) {
-            curUser = SharedUserManager.getInstance(this).getUser();
+        if(UserManager.getInstance(this).isLoggedIn()) {
+            curUser = UserManager.getInstance(this).getUser();
         }
 
         if(curUser == null) {

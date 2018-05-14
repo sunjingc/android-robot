@@ -10,6 +10,7 @@ import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -18,9 +19,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.dragMode.DragModeQuestionActivity;
+import com.androb.androidrobot.messageUtil.MessageFormatter;
 import com.androb.androidrobot.messageUtil.MessageService;
-import com.androb.androidrobot.userManagement.SharedUserManager;
+import com.androb.androidrobot.userUtil.QuestionStatusManager;
+import com.androb.androidrobot.userUtil.UserManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -61,8 +63,33 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     private JSONReceiver receiver;
     private boolean isLoggedin;
 
+    private boolean qStatus = false;
+
+    // JSON message
+    private MessageFormatter formatter = new MessageFormatter();
+
     // 处理输入格式
 //    private MessageService msgService;
+
+    protected void onStart() {
+        receiver = new JSONReceiver();
+        IntentFilter filter = new IntentFilter();
+        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+        registerReceiver(receiver, filter);
+        super.onStart();
+        qStatus = QuestionStatusManager.getInstance(CodeModeQuestionActivity.this).checkQuestionStatus("code", questionId);
+        System.out.println("in CodeMode, qStatus: " + qStatus);
+        if(qStatus) {
+            Toast.makeText(CodeModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
+        }
+        Log.d("CodeMode", "onStart");
+    }
+
+    protected void onDestroy() {
+        unregisterReceiver(receiver);
+        super.onDestroy();
+        Log.d("CodeMode", "onDestroy");
+    }
 
 
     protected void onCreate(Bundle savedInstanceState) {
@@ -107,12 +134,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         mSpansManager = new SpansManager(this, codeInputText, etInput);
         mSpansManager.doFillBlank(mTestStr);
 
-        isLoggedin = SharedUserManager.getInstance(this).isLoggedIn();
-
-        receiver = new JSONReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-        registerReceiver(receiver, filter);
+        isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
     }
 
@@ -145,12 +167,14 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
                 }
 
                 if(isValid) {
-                    Intent submitIntent = new Intent(this, MessageService.class);
-
-                    submitIntent.putExtra("answerStr", answerString);
-                    submitIntent.putExtra("quesType", quesType);
-                    submitIntent.putExtra("quesId", questionId + "");
-                    startService(submitIntent);
+//                    Intent submitIntent = new Intent(this, MessageService.class);
+//
+//                    submitIntent.putExtra("answerStr", answerString);
+//                    submitIntent.putExtra("quesType", quesType);
+//                    submitIntent.putExtra("quesId", questionId + "");
+//                    startService(submitIntent);
+                    jsonResult = formatter.format2JSON(answerString, quesType, questionId + "").toString();
+                    System.out.println("in codeQues: " + jsonResult);
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "哪里有点问题啊", Toast.LENGTH_SHORT).show();
@@ -282,7 +306,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
             if(checkAnswer(jsonResult) == true){
                 Toast.makeText(CodeModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
                 if(isLoggedin) {
-                    SharedUserManager.getInstance(context).updateScore();
+                    UserManager.getInstance(context).updateScore();
                 }
             }
             else {

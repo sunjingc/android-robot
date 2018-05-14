@@ -21,6 +21,10 @@ import butterknife.ButterKnife;
 //import butterknife.InjectView;
 import butterknife.BindView;
 
+import com.androb.androidrobot.userUtil.URLs;
+import com.androb.androidrobot.userUtil.User;
+import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.userUtil.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -122,7 +126,7 @@ public class LoginActivity extends AppCompatActivity implements View.OnClickList
                                 );
 
                                 //storing the user in shared preferences
-                                SharedUserManager.getInstance(getApplicationContext()).userLogin(user);
+                                UserManager.getInstance(getApplicationContext()).userLogin(user);
 
                                 //starting the profile activity
                                 finish();

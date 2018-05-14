@@ -1,20 +1,16 @@
-package com.androb.androidrobot.userManagement;
+package com.androb.androidrobot.userUtil;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
-import android.widget.Toast;
 
-import com.androb.androidrobot.CollegeStuMainActivity;
+import com.androb.androidrobot.userManagement.StartActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -24,31 +20,31 @@ import java.util.Map;
  * Created by kaki on 2018/05/08.
  */
 
-public class SharedUserManager {
+public class UserManager {
 
     //the constants
-    private static final String TAG = "SharedUserManager";
+    private static final String TAG = "UserManager";
 
-    private static final String SHARED_PREF_NAME = "sharedPref";
+    private static final String SHARED_PREF_NAME = "sharedUserPref";
     private static final String KEY_APICALL = "apicall";
     private static final String KEY_USERNAME = "username";
     private static final String KEY_PASSWORD = "password";
     private static final String KEY_SCORE = "score";
 
-    private static SharedUserManager mInstance;
+    private static UserManager mInstance;
     private static Context mCtx;
 
     private String uname = "";
     private int oriScore = 0;
     private int newScore = 0;
 
-    private SharedUserManager(Context context) {
+    private UserManager(Context context) {
         mCtx = context;
     }
 
-    public static synchronized SharedUserManager getInstance(Context context) {
+    public static synchronized UserManager getInstance(Context context) {
         if (mInstance == null) {
-            mInstance = new SharedUserManager(context);
+            mInstance = new UserManager(context);
         }
         return mInstance;
     }
@@ -102,7 +98,7 @@ public class SharedUserManager {
                 new Response.Listener<String>() {
                     @Override
                     public void onResponse(String response) {
-                        System.out.println("respo: " + response);
+                        System.out.println("in update, respo: " + response);
                     }
                 },
                 new Response.ErrorListener() {

@@ -9,10 +9,6 @@ import android.widget.TextView;
 
 import com.androb.androidrobot.CollegeStuMainActivity;
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.codeMode.CodeModeStartActivity;
-import com.androb.androidrobot.connectionUtil.BluetoothDiscoverActivity;
-import com.androb.androidrobot.dragMode.DragModeStartActivity;
-import com.androb.androidrobot.graphMode.GraphModeStartActivity;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
