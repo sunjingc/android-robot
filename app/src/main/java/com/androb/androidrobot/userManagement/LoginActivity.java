@@ -21,10 +21,10 @@ import butterknife.ButterKnife;
 //import butterknife.InjectView;
 import butterknife.BindView;
 
-import com.androb.androidrobot.utils.userUtil.URLs;
+import com.androb.androidrobot.utils.URLs;
 import com.androb.androidrobot.models.User;
 import com.androb.androidrobot.utils.userUtil.UserManager;
-import com.androb.androidrobot.utils.userUtil.VolleySingleton;
+import com.androb.androidrobot.utils.dbUtil.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;

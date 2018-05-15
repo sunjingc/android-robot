@@ -1,4 +1,4 @@
-package com.androb.androidrobot.utils.userUtil;
+package com.androb.androidrobot.utils;
 
 /**
  * Created by kaki on 2018/05/08.

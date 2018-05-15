@@ -10,8 +10,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 import com.android.volley.toolbox.StringRequest;
 
-import com.androb.androidrobot.utils.userUtil.VolleySingleton;
-import com.androb.androidrobot.utils.userUtil.URLs;
+import com.androb.androidrobot.utils.dbUtil.VolleySingleton;
+import com.androb.androidrobot.utils.URLs;
 
 import org.json.JSONException;
 import org.json.JSONObject;

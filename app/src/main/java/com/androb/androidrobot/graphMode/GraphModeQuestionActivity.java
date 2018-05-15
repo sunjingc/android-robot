@@ -28,16 +28,7 @@ import com.androb.androidrobot.R;
 import com.androb.androidrobot.utils.messageUtil.MessageService;
 import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
 import com.androb.androidrobot.utils.userUtil.UserManager;
-import com.androb.androidrobot.utils.userUtil.URLs;
 import com.androb.androidrobot.models.User;
-import com.android.volley.AuthFailureError;
-import com.android.volley.Request;
-import com.android.volley.Response;
-import com.android.volley.VolleyError;
-import com.android.volley.toolbox.StringRequest;
-
-import org.json.JSONException;
-import org.json.JSONObject;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -46,7 +37,6 @@ import java.util.List;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -77,6 +67,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
 
     @BindView(R.id.help_btn)
     ImageButton btn_help;
+    @BindView(R.id.graph_done)
+    Button graphDone;
 
     private Intent mIntent;
     private int questionId = 0;
@@ -127,18 +119,21 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     protected void onStart() {
         super.onStart();
 
+        if(isLoggedin) {
+            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+            qStatus = (sharedPreferences.getString("graphString", null).indexOf(questionId + "") == -1);
+            if(qStatus) {
+                graphDone.setVisibility(View.INVISIBLE);
+            }
+        }
+
         receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
         registerReceiver(receiver, filter);
-        this.checkQuestionStatus();
+//        this.checkQuestionStatus();
 
         Log.d("GraphMode", "onStart");
-        qStatus = QuestionStatusManager.getInstance(GraphModeQuestionActivity.this).checkQuestionStatus("graph", questionId);
-
-        if(qStatus) {
-            Toast.makeText(GraphModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
-        }
     }
 
     protected void onDestroy() {
@@ -154,6 +149,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
         setContentView(R.layout.graph_mode_question_layout);
 
         ButterKnife.bind(this);
+
+        isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
         Intent intent = this.getIntent();
         questionId = Integer.parseInt(intent.getStringExtra("btn_id"));
@@ -850,61 +847,61 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     }
 
 
-    // 检查用户是否已经正确回答过这道题？？
-    public void checkQuestionStatus() {
-
-        // 用username和quesId两个param查询，看看结果是否>0
-
-        System.out.println("in checkQuestionStatus");
-
-        SharedPreferences sp = this.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
-        username = sp.getString(KEY_USERNAME, null);
-
-        StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.URL_GRAPH,
-                new Response.Listener<String>() {
-                    @Override
-                    public void onResponse(String response) {
-                        try {
-                            //converting response to json object
-                            System.out.println("response: " + response);
-                            JSONObject obj = new JSONObject(response);
-
-                            //if no error in response
-                            if (!obj.getBoolean("error")) {
-                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-
-                                System.out.println("record for ques: " + obj.getString("status"));
-                                //starting the profile activity
-                                finish();
-                            }
-                            else {
-                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
-                            }
-                        } catch (JSONException e) {
-                            e.printStackTrace();
-                        }
-                    }
-                },
-                new Response.ErrorListener() {
-                    @Override
-                    public void onErrorResponse(VolleyError error) {
-                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-                    }
-                }) {
-            @Override
-            protected Map<String, String> getParams() throws AuthFailureError {
-                Map<String, String> params = new HashMap<>();
-                params.put(KEY_APICALL, "graph");
-                params.put(KEY_USERNAME, username);
-                params.put(KEY_QUESID, String.valueOf(questionId));
-                return params;
-            }
-        };
-
-        // TODO: 为什么add to queue会跳到previous activity
-//        VolleySingleton.getInstance(this.getApplicationContext()).addToRequestQueue(stringRequest);
-        Log.d("Graph Mode: ", "After VolleySingleton, add to queue");
-    }
+//    // 检查用户是否已经正确回答过这道题？？
+//    public void checkQuestionStatus() {
+//
+//        // 用username和quesId两个param查询，看看结果是否>0
+//
+//        System.out.println("in checkQuestionStatus");
+//
+//        SharedPreferences sp = this.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+//        username = sp.getString(KEY_USERNAME, null);
+//
+//        StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.URL_GRAPH,
+//                new Response.Listener<String>() {
+//                    @Override
+//                    public void onResponse(String response) {
+//                        try {
+//                            //converting response to json object
+//                            System.out.println("response: " + response);
+//                            JSONObject obj = new JSONObject(response);
+//
+//                            //if no error in response
+//                            if (!obj.getBoolean("error")) {
+//                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+//
+//                                System.out.println("record for ques: " + obj.getString("status"));
+//                                //starting the profile activity
+//                                finish();
+//                            }
+//                            else {
+//                                Toast.makeText(getApplicationContext(), obj.getString("message"), Toast.LENGTH_SHORT).show();
+//                            }
+//                        } catch (JSONException e) {
+//                            e.printStackTrace();
+//                        }
+//                    }
+//                },
+//                new Response.ErrorListener() {
+//                    @Override
+//                    public void onErrorResponse(VolleyError error) {
+//                        Toast.makeText(getApplicationContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//                    }
+//                }) {
+//            @Override
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//                Map<String, String> params = new HashMap<>();
+//                params.put(KEY_APICALL, "graph");
+//                params.put(KEY_USERNAME, username);
+//                params.put(KEY_QUESID, String.valueOf(questionId));
+//                return params;
+//            }
+//        };
+//
+//        // TODO: 为什么add to queue会跳到previous activity
+////        VolleySingleton.getInstance(this.getApplicationContext()).addToRequestQueue(stringRequest);
+//        Log.d("Graph Mode: ", "After VolleySingleton, add to queue");
+//    }
 
 
 }

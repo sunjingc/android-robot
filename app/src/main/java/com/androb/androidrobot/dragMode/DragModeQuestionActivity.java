@@ -9,6 +9,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -68,6 +69,8 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     Button btnSubmit;
     @BindView(R.id.drag_question_text)
     TextView dragText;
+    @BindView(R.id.drag_done)
+    Button dragDone;
 
     @BindView(R.id.answer_layout)
     LinearLayout answerLayout;
@@ -147,6 +150,16 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         quesId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
         initView();
+
+        isLoggedin = UserManager.getInstance(this).isLoggedIn();
+
+        if(isLoggedin) {
+            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+            qStatus = (sharedPreferences.getString("dragString", null).indexOf(quesId + "") == -1);
+            if(qStatus) {
+                dragDone.setVisibility(View.INVISIBLE);
+            }
+        }
 
 //        btSocket = btSingleton.getInstance();
 

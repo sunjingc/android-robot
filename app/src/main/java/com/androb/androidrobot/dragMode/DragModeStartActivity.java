@@ -1,8 +1,13 @@
 package com.androb.androidrobot.dragMode;
 
+import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -10,6 +15,9 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
+import com.androb.androidrobot.utils.dbUtil.DBHelper;
+import com.androb.androidrobot.utils.dbUtil.VolleyCallback;
+import com.androb.androidrobot.utils.userUtil.UserManager;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -43,9 +51,76 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
 
     private Intent mIntent;
 
+    // question status
+    private String dragString = "";
+    private DBHelper dbHelper;
+    private Context mContext;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        mContext = this.getApplicationContext();
+        dbHelper = new DBHelper(this.getApplicationContext());
+        if(UserManager.getInstance(this).isLoggedIn()) {
+
+            // Create Inner Thread Class
+            Thread dbThread = new Thread(new Runnable() {
+
+                // After call for background.start this run method call
+                public void run() {
+                    try {
+
+                        dragString = dbHelper.checkQuestionStatus("drag", new VolleyCallback() {
+                            @Override
+                            public void onSuccess(String result) {
+                                dragString = result;
+
+                                SharedPreferences sharedPreferences = mContext.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+                                SharedPreferences.Editor editor = sharedPreferences.edit();
+                                editor.putString("dragString", dragString);
+                                System.out.println("dragString: " + dragString);
+                                editor.apply();
+
+                                System.out.println("onSuccess dragString: " + dragString);
+                            }
+                        });
+
+                        threadMsg(dragString);
+
+                    } catch (Throwable t) {
+                        // just end the background thread
+                        Log.i("Drag", "Thread  exception " + t);
+                    }
+                }
+
+                private void threadMsg(String msg) {
+
+                    if (!msg.equals(null) && !msg.equals("")) {
+                        Message msgObj = handler.obtainMessage();
+                        Bundle b = new Bundle();
+                        b.putString("message", msg);
+                        msgObj.setData(b);
+                        handler.sendMessage(msgObj);
+                    }
+                }
+
+                // Define the Handler that receives messages from the thread and update the progress
+                private final Handler handler = new Handler() {
+
+                    public void handleMessage(Message msg) {
+
+//                    String aResponse = msg.getData().getString("message");
+                        System.out.println("handling msg");
+
+                    }
+                };
+
+            });
+            // Start Thread
+            dbThread.start();  //After call start method thread called run Method
+
+        }
 
         setContentView(R.layout.drag_mode_start_layout);
 

@@ -15,6 +15,20 @@
         android:layout_marginLeft="20dp"
         android:text="Graph题目here："/>
 
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/graph_done"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+
+        android:layout_alignBottom="@+id/graph_question_text"
+        android:layout_toLeftOf="@+id/help_btn"
+        android:layout_toStartOf="@+id/help_btn"
+        android:backgroundTint="@color/material_red_700"
+        android:clickable="false"
+        android:text="已完成"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
     <ImageButton
         android:id="@+id/help_btn"
         android:layout_width="45dp"
