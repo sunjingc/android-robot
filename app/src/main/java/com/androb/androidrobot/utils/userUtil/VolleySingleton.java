@@ -1,4 +1,4 @@
-package com.androb.androidrobot.userUtil;
+package com.androb.androidrobot.utils.userUtil;
 
 import android.content.Context;
 

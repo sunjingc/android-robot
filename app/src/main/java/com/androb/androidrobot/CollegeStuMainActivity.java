@@ -2,21 +2,26 @@ package com.androb.androidrobot;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
-import com.androb.androidrobot.connectionUtil.BluetoothDiscoverActivity;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothDiscoverActivity;
 
 
 import com.androb.androidrobot.dragMode.DragModeStartActivity;
 import com.androb.androidrobot.graphMode.GraphModeStartActivity;
 import com.androb.androidrobot.codeMode.CodeModeStartActivity;
 import com.androb.androidrobot.userManagement.ProfileActivity;
-import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.utils.dbUtil.DBHelper;
+import com.androb.androidrobot.utils.dbUtil.VolleyCallback;
+import com.androb.androidrobot.utils.userUtil.UserManager;
 import com.androb.androidrobot.userManagement.StartActivity;
-import com.androb.androidrobot.userUtil.User;
+import com.androb.androidrobot.models.User;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -41,11 +46,22 @@ public class CollegeStuMainActivity extends AppCompatActivity {
     TextView _loginLink;
 
     private User curUser;
+    private DBHelper dbHelper;
+
+    private String codeString = "";
+
+
+    protected void onStart() {
+        super.onStart();
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collegestumain_layout);
+
+        dbHelper = new DBHelper(this.getApplicationContext());
 
         ButterKnife.bind(this);
 
@@ -108,6 +124,8 @@ public class CollegeStuMainActivity extends AppCompatActivity {
             _profileLink.setVisibility(View.VISIBLE);
             _loginLink.setVisibility(View.INVISIBLE);
         }
+
+
 
     }
 

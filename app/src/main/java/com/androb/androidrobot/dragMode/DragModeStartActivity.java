@@ -10,7 +10,6 @@ import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.dragAndDrop.AnswerRange;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -87,28 +86,5 @@ public class DragModeStartActivity extends AppCompatActivity implements View.OnC
         }
     }
 
-
-    private void initData() {
-        String content = "Starting point";
-
-        // 选项集合
-        List<String> optionList = new ArrayList<>();
-        optionList.add("go");
-        optionList.add("loop");
-        optionList.add("repeat");
-        optionList.add("sing");
-        optionList.add("turn left");
-        optionList.add("turn right");
-
-        // 答案范围集合
-        List<AnswerRange> rangeList = new ArrayList<>();
-
-        // word count
-        rangeList.add(new AnswerRange(5, 13));
-        rangeList.add(new AnswerRange(23, 31));
-        rangeList.add(new AnswerRange(38, 46));
-
-//        dragModeContent.setData(content, optionList, rangeList);
-    }
 
 }

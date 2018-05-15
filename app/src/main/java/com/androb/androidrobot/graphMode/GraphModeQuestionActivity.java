@@ -25,11 +25,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.messageUtil.MessageService;
-import com.androb.androidrobot.userUtil.QuestionStatusManager;
-import com.androb.androidrobot.userUtil.UserManager;
-import com.androb.androidrobot.userUtil.URLs;
-import com.androb.androidrobot.userUtil.User;
+import com.androb.androidrobot.utils.messageUtil.MessageService;
+import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
+import com.androb.androidrobot.utils.userUtil.UserManager;
+import com.androb.androidrobot.utils.userUtil.URLs;
+import com.androb.androidrobot.models.User;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;

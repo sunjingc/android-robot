@@ -1,8 +1,18 @@
-package com.androb.androidrobot.messageUtil;
+package com.androb.androidrobot.utils.messageUtil;
+
+import android.app.Service;
+import android.bluetooth.BluetoothSocket;
+import android.content.Intent;
+import android.os.IBinder;
+import android.support.annotation.Nullable;
+import android.util.Log;
+
+import com.androb.androidrobot.R;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -10,10 +20,10 @@ import java.util.HashMap;
 import java.util.List;
 
 /**
- * Created by kaki on 2018/05/14.
+ * Created by kaki on 2018/04/26.
  */
 
-public class MessageFormatter {
+public class MessageService extends Service {
 
     // 定义
     private final int CAR_FORWARD = 1;
@@ -27,6 +37,10 @@ public class MessageFormatter {
 
     private final int CAR_REPEAT = 10;
 
+    private String quesType;
+    private String quesId;
+    private String answerStr;
+
     private HashMap<String, Integer> dragTranslation = new HashMap<>();
 
     private List<String> codeBlankProperties = new ArrayList<String>();
@@ -35,9 +49,50 @@ public class MessageFormatter {
 
     private JSONObject jsonResult;
 
-    public JSONObject format2JSON(String answerStr, String quesType, String quesId) {
+//    private BluetoothSocketSingleton btSingleton;
+    private BluetoothSocket btSocket;
+
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.e("MessageService", "onBind");
+        return null;
+    }
+
+    /**
+     * 每次通过startService()方法启动Service时都会被回调。
+     * @param intent
+     * @param flags
+     * @param startId
+     * @return
+     */
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+
+//        Intent btIntent = new Intent(this, BluetoothService.class);
+
+        System.out.println("MessageService onStartCommand invoke");
+
+        dragTranslation.put("前进", CAR_FORWARD);
+        dragTranslation.put("后退", CAR_BACKWARD);
+        dragTranslation.put("左转", CAR_LEFT);
+        dragTranslation.put("右转", CAR_RIGHT);
+        dragTranslation.put("暂停", CAR_PAUSE);
+        dragTranslation.put("唱歌", CAR_SING);
+
+
+        answerStr = intent.getStringExtra("answerStr");
+        quesType = intent.getStringExtra("quesType");
+        quesId = intent.getStringExtra("quesId");
+
         int qid = Integer.valueOf(quesId);
 
+        System.out.println("message is here: " + answerStr);
+        System.out.println("ques Type is: " + quesType);
+        System.out.println("ques Id is: " + quesId);
+
+//        startService(btIntent);
         switch (quesType) {
             case "code":
                 try {
@@ -64,8 +119,22 @@ public class MessageFormatter {
                 break;
         }
 
-        return jsonResult;
+        Intent resultIntent = new Intent("com.androb.androidrobot.messageUtil.MessageService");
+        resultIntent.putExtra("json", jsonResult.toString());
+        sendBroadcast(resultIntent);
+
+        return super.onStartCommand(intent, flags, startId);
     }
+
+    /**
+     * 服务销毁时的回调
+     */
+    @Override
+    public void onDestroy() {
+        System.out.println("onDestroy invoke");
+        super.onDestroy();
+    }
+
 
     /**
      * 转换Code模式的json
@@ -381,4 +450,20 @@ public class MessageFormatter {
 
         return baseJson;
     }
+
+//    private boolean transferMsg(String msg) {
+//        boolean result = false;
+//        btSingleton = new BluetoothSocketSingleton();
+//        btSocket = btSingleton.getInstance();
+//
+//        try {
+//            btSocket.connect();
+//
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }
+//
+//        return result;
+//    }
+
 }

@@ -58,14 +58,14 @@
         <!--<activity android:name=".dragAndDrop.DragTestActivity"-->
             <!--android:screenOrientation="portrait"/>-->
 
-        <activity android:name=".connectionUtil.BluetoothDiscoverActivity"
+        <activity android:name=".utils.connectionUtil.BluetoothDiscoverActivity"
             android:screenOrientation="portrait"/>
 
         <activity android:name=".userManagement.ProfileActivity" />
 
         <!--Services-->
         <!--<service android:name=".connectionUtil.BluetoothService" />-->
-        <service android:name=".messageUtil.MessageService" />
+        <service android:name=".utils.messageUtil.MessageService" />
 
     </application>
 

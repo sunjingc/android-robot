@@ -24,15 +24,12 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.connectionUtil.BluetoothDeviceSingleton;
-import com.androb.androidrobot.connectionUtil.BluetoothMsgUtil;
-import com.androb.androidrobot.messageUtil.MessageService;
-import com.androb.androidrobot.userUtil.QuestionStatusManager;
-import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothDeviceSingleton;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothMsgUtil;
+import com.androb.androidrobot.utils.messageUtil.MessageService;
+import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
+import com.androb.androidrobot.utils.userUtil.UserManager;
 
-import java.io.IOException;
-import java.io.OutputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -699,7 +696,13 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
             Toast.makeText(getApplicationContext(), "JSONMessageReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
 
 //            this.sendBtMsg(jsonResult);
-            btMsgUtil.sendMsg(jsonResult);
+
+            try {
+                btMsgUtil.sendMsg(jsonResult);
+            } catch(Exception e) {
+                Toast.makeText(DragModeQuestionActivity.this, "蓝牙不太对啊", Toast.LENGTH_SHORT).show();
+            }
+//            btMsgUtil.sendMsg(jsonResult);
             if(checkAnswer(jsonResult) == true){
                 Toast.makeText(DragModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
                 if(isLoggedin) {

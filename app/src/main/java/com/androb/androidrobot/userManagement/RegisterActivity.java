@@ -13,10 +13,10 @@ import android.widget.Toast;
 
 import com.androb.androidrobot.CollegeStuMainActivity;
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.userUtil.URLs;
-import com.androb.androidrobot.userUtil.User;
-import com.androb.androidrobot.userUtil.UserManager;
-import com.androb.androidrobot.userUtil.VolleySingleton;
+import com.androb.androidrobot.utils.userUtil.URLs;
+import com.androb.androidrobot.models.User;
+import com.androb.androidrobot.utils.userUtil.UserManager;
+import com.androb.androidrobot.utils.userUtil.VolleySingleton;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;
 import com.android.volley.Response;

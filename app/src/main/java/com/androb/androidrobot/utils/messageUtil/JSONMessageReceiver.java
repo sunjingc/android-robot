@@ -1,13 +1,13 @@
-package com.androb.androidrobot.messageUtil;
+package com.androb.androidrobot.utils.messageUtil;
 
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.widget.Toast;
 
-import com.androb.androidrobot.connectionUtil.BluetoothMsgUtil;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothMsgUtil;
 import com.androb.androidrobot.dragMode.DragModeQuestionActivity;
-import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.utils.userUtil.UserManager;
 
 /**
  * Created by kaki on 2018/05/14.

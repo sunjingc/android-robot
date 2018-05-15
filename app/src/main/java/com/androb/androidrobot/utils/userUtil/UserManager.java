@@ -1,10 +1,11 @@
-package com.androb.androidrobot.userUtil;
+package com.androb.androidrobot.utils.userUtil;
 
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.util.Log;
 
+import com.androb.androidrobot.models.User;
 import com.androb.androidrobot.userManagement.StartActivity;
 import com.android.volley.AuthFailureError;
 import com.android.volley.Request;

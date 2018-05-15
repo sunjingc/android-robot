@@ -1,4 +1,4 @@
-package com.androb.androidrobot.connectionUtil;
+package com.androb.androidrobot.utils.connectionUtil;
 
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;

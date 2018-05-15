@@ -1,4 +1,4 @@
-package com.androb.androidrobot.connectionUtil;
+package com.androb.androidrobot.utils.connectionUtil;
 
 import android.widget.RadioButton;
 import android.widget.TextView;

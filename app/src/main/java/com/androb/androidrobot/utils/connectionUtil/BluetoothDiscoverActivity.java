@@ -1,7 +1,8 @@
-package com.androb.androidrobot.connectionUtil;
+package com.androb.androidrobot.utils.connectionUtil;
 
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -51,7 +52,10 @@ public class BluetoothDiscoverActivity extends Activity {
     // 为其链接创建一个名称
     private final String NAME = "Bluetooth_Socket";
     // 选中发送数据的蓝牙设备，全局变量，否则连接在方法执行完就结束了
+
+    // Singleton相关
     private BluetoothDevice selectDevice;
+    private BluetoothSocket mmSocket;
     // 获取到选中设备的客户端串口，全局变量，否则连接在方法执行完就结束了
 
     //用于记录用户选择的变量
@@ -156,6 +160,16 @@ public class BluetoothDiscoverActivity extends Activity {
         }
 
         BluetoothDeviceSingleton.setDevice(selectDevice);
+        try {
+            mmSocket = (BluetoothSocket) selectDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(selectDevice,1);
+            BluetoothSocketSingleton.setSocket(mmSocket);
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+        } catch (InvocationTargetException e) {
+            e.printStackTrace();
+        } catch (NoSuchMethodException e) {
+            e.printStackTrace();
+        }
 
         Toast.makeText(BluetoothDiscoverActivity.this, "End of ChooseDevice", Toast.LENGTH_SHORT).show();
     }

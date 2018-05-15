@@ -1,10 +1,10 @@
 package com.androb.androidrobot.codeMode;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.graphics.RectF;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -19,10 +19,11 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.messageUtil.MessageFormatter;
-import com.androb.androidrobot.messageUtil.MessageService;
-import com.androb.androidrobot.userUtil.QuestionStatusManager;
-import com.androb.androidrobot.userUtil.UserManager;
+import com.androb.androidrobot.utils.connectionUtil.NewTransferUtil;
+import com.androb.androidrobot.utils.messageUtil.MessageFormatter;
+import com.androb.androidrobot.utils.messageUtil.MessageValidator;
+import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
+import com.androb.androidrobot.utils.userUtil.UserManager;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -44,11 +45,14 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     TextView codeInputText;
     @BindView(R.id.et_input)
     EditText etInput;
+    @BindView(R.id.code_done)
+    Button codeDone;
 
     @BindView(R.id.code_help_btn)
     ImageButton helpButton;
 
     private int questionId = 0;
+    private String finishedId = "";
     private String mTestStr;
 
     private String answerString;
@@ -60,37 +64,35 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     private AlertDialog.Builder builder;
 
     private String jsonResult;
-    private JSONReceiver receiver;
+//    private JSONReceiver receiver;
     private boolean isLoggedin;
 
     private boolean qStatus = false;
 
     // JSON message
     private MessageFormatter formatter = new MessageFormatter();
+    private MessageValidator validator = new MessageValidator();
+
+    private NewTransferUtil transferUtil = new NewTransferUtil();
 
     // 处理输入格式
 //    private MessageService msgService;
 
     protected void onStart() {
-        receiver = new JSONReceiver();
+//        receiver = new JSONReceiver();
         IntentFilter filter = new IntentFilter();
         filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-        registerReceiver(receiver, filter);
+//        registerReceiver(receiver, filter);
         super.onStart();
-        qStatus = QuestionStatusManager.getInstance(CodeModeQuestionActivity.this).checkQuestionStatus("code", questionId);
-        System.out.println("in CodeMode, qStatus: " + qStatus);
-        if(qStatus) {
-            Toast.makeText(CodeModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
-        }
+
         Log.d("CodeMode", "onStart");
     }
 
     protected void onDestroy() {
-        unregisterReceiver(receiver);
+//        unregisterReceiver(receiver);
         super.onDestroy();
         Log.d("CodeMode", "onDestroy");
     }
-
 
     protected void onCreate(Bundle savedInstanceState) {
 
@@ -104,7 +106,6 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         Intent intent = this.getIntent();
         questionId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
-        System.out.println("Question ID: " + questionId);
 
         submitButton.setOnClickListener(this);
         helpButton.setOnClickListener(this);
@@ -135,6 +136,14 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         mSpansManager.doFillBlank(mTestStr);
 
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
+
+        if(isLoggedin) {
+            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+            qStatus = (sharedPreferences.getString("codeString", null).indexOf(questionId + "") == -1);
+            if(qStatus) {
+                codeDone.setVisibility(View.INVISIBLE);
+            }
+        }
 
     }
 
@@ -167,14 +176,21 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
                 }
 
                 if(isValid) {
-//                    Intent submitIntent = new Intent(this, MessageService.class);
-//
-//                    submitIntent.putExtra("answerStr", answerString);
-//                    submitIntent.putExtra("quesType", quesType);
-//                    submitIntent.putExtra("quesId", questionId + "");
-//                    startService(submitIntent);
                     jsonResult = formatter.format2JSON(answerString, quesType, questionId + "").toString();
                     System.out.println("in codeQues: " + jsonResult);
+
+                    // TODO: 5/15 新的传输test，用socketSingleton
+                    transferUtil.sendMsg(jsonResult);
+
+                    if(validator.checkMessage(jsonResult, quesType, questionId + "")) {
+                        Toast.makeText(getApplicationContext(), "回答正确", Toast.LENGTH_SHORT).show();
+                        System.out.println("in codeQues: correct" );
+
+                        if(isLoggedin) {
+                            UserManager.getInstance(getApplicationContext()).updateScore();
+                            QuestionStatusManager.getInstance(getApplicationContext()).updateStatus(quesType, questionId);
+                        }
+                    }
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "哪里有点问题啊", Toast.LENGTH_SHORT).show();
@@ -297,62 +313,62 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
         return result;
     }
 
-    public class JSONReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            jsonResult = intent.getStringExtra("json");
-
-            if(checkAnswer(jsonResult) == true){
-                Toast.makeText(CodeModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
-                if(isLoggedin) {
-                    UserManager.getInstance(context).updateScore();
-                }
-            }
-            else {
-                Toast.makeText(CodeModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
-            }
-
-            System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
-        }
-    }
-
-    private boolean checkAnswer(String answer) {
-        boolean result = false;
-        switch(questionId) {
-            case 1:
-                if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
-                    System.out.println("true");
-                    result = true;
-                } else {
-                    System.out.println("false");
-                    result = false;
-                }
-                break;
-            case 2:
-                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-            case 3:
-                if (answer.equals("{\"10\":{\"5\":{\"1\":\"2\",\"4\":\"3\"}}}")) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-            case 4:
-                if ( (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"3\":\"90\"}}}"))
-                        || (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"2\":\"90\"}}}")) ) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-        }
-        return result;
-    }
+//    public class JSONReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+//            jsonResult = intent.getStringExtra("json");
+//
+//            if(checkAnswer(jsonResult) == true){
+//                Toast.makeText(CodeModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+//                if(isLoggedin) {
+//                    UserManager.getInstance(context).updateScore();
+//                }
+//            }
+//            else {
+//                Toast.makeText(CodeModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+//            }
+//
+//            System.out.println("in CodeMode, JSONReceiver received jsonResult: " + jsonResult);
+//        }
+//    }
+//
+//    private boolean checkAnswer(String answer) {
+//        boolean result = false;
+//        switch(questionId) {
+//            case 1:
+//                if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
+//                    System.out.println("true");
+//                    result = true;
+//                } else {
+//                    System.out.println("false");
+//                    result = false;
+//                }
+//                break;
+//            case 2:
+//                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
+//                    result = true;
+//                } else {
+//                    result = false;
+//                }
+//                break;
+//            case 3:
+//                if (answer.equals("{\"10\":{\"5\":{\"1\":\"2\",\"4\":\"3\"}}}")) {
+//                    result = true;
+//                } else {
+//                    result = false;
+//                }
+//                break;
+//            case 4:
+//                if ( (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"3\":\"90\"}}}"))
+//                        || (answer.equals("{\"5\":\"1\",\"10\":{\"4\":{\"1\":\"3\",\"2\":\"90\"}}}")) ) {
+//                    result = true;
+//                } else {
+//                    result = false;
+//                }
+//                break;
+//        }
+//        return result;
+//    }
 
 }
