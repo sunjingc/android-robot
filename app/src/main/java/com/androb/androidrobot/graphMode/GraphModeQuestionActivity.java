@@ -277,7 +277,7 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
                     ImageView orderView = new ImageView(this);
 
                     orderView.setLayoutParams(new LinearLayout.LayoutParams(200, 40));  //设置图片宽高
-                    orderView.setImageResource(R.drawable.new_order); //图片资源
+                    orderView.setImageResource(R.drawable.new_order_copy); //图片资源
 
                     ViewGroup.MarginLayoutParams orderMargin = new ViewGroup.MarginLayoutParams(orderView.getLayoutParams());
                     orderMargin.leftMargin = 290;
