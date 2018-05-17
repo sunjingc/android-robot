@@ -1,14 +1,10 @@
 package com.androb.androidrobot.dragMode;
 
-import android.bluetooth.BluetoothDevice;
-import android.bluetooth.BluetoothSocket;
-import android.content.BroadcastReceiver;
 import android.content.ClipData;
 import android.content.ClipDescription;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -25,9 +21,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.utils.connectionUtil.BluetoothDeviceSingleton;
-import com.androb.androidrobot.utils.connectionUtil.BluetoothMsgUtil;
-import com.androb.androidrobot.utils.messageUtil.MessageService;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothService;
+import com.androb.androidrobot.utils.connectionUtil.TransferUtil;
+import com.androb.androidrobot.utils.messageUtil.MessageFormatter;
+import com.androb.androidrobot.utils.messageUtil.MessageValidator;
 import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
 import com.androb.androidrobot.utils.userUtil.UserManager;
 
@@ -99,10 +96,11 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     private int REPEAT_FLAG = 0;
 
     private List<String> answerStrList = new ArrayList<>();
+    private String answerStr;
 
     private AlertDialog.Builder builder;
 
-    private JSONReceiver receiver;
+//    private JSONReceiver receiver;
     private String jsonResult;
     private boolean isLoggedin;
 
@@ -113,16 +111,19 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
     private boolean qStatus = false;
 
-    // Bluetooth transfer
-    BluetoothSocket mmSocket;
-    BluetoothDevice mmDevice = BluetoothDeviceSingleton.getInstance();
-    private BluetoothMsgUtil btMsgUtil = new BluetoothMsgUtil();
+    // check message and BT transfer
+    // JSON message
+    private MessageFormatter formatter = new MessageFormatter();
+    private MessageValidator validator = new MessageValidator();
+
+    private TransferUtil transferUtil = new TransferUtil();
+    private Context context;
+
+    private int lessWidth;
+
+
 
     protected void onStart() {
-        receiver = new JSONReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-        registerReceiver(receiver, filter);
         qStatus = QuestionStatusManager.getInstance(DragModeQuestionActivity.this).checkQuestionStatus("drag", quesId);
 
         if(qStatus) {
@@ -132,7 +133,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
     }
 
     protected void onDestroy() {
-        unregisterReceiver(receiver);
+//        unregisterReceiver(receiver);
 
         super.onDestroy();
     }
@@ -146,6 +147,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         btnHelp.setOnClickListener(this);
         btnSubmit.setOnClickListener(this);
 
+        context = this.getApplicationContext();
         Intent intent = this.getIntent();
         quesId = Integer.parseInt(intent.getStringExtra("btn_id"));
 
@@ -153,11 +155,12 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
+        dragDone.setVisibility(View.INVISIBLE);
         if(isLoggedin) {
             SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
             qStatus = (sharedPreferences.getString("dragString", null).indexOf(quesId + "") == -1);
-            if(qStatus) {
-                dragDone.setVisibility(View.INVISIBLE);
+            if(!qStatus) {
+                dragDone.setVisibility(View.VISIBLE);
             }
         }
 
@@ -173,10 +176,12 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
-        receiver = new JSONReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-        registerReceiver(receiver, filter);
+        lessWidth = btnForward.getLayoutParams().width - 120;
+
+//        receiver = new JSONReceiver();
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+//        registerReceiver(receiver, filter);
     }
 
     private void initView() {
@@ -332,7 +337,7 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
                         System.out.println("REPEAT_FLAG:  " + REPEAT_FLAG);
                         if(owner.getId() == R.id.btns_layout) {
                             if(REPEAT_FLAG == 1) {
-                                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(btnForward.getLayoutParams().width - 120, btnForward.getLayoutParams().height,((LinearLayout.LayoutParams) btnForward.getLayoutParams()).weight);
+                                LinearLayout.LayoutParams param = new LinearLayout.LayoutParams(lessWidth, standardHeight);
                                 param.gravity = Gravity.CENTER;
                                 vw.setLayoutParams(param);
                             }
@@ -345,13 +350,6 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
                         break;
 
                 }
-
-//                if((REPEAT_FLAG == 1) && (vw.getId() != R.id.drag_btn_repeat) && (vw.getId() != R.id.drag_btn_end) && (owner.getId() == R.id.answer_layout)){
-//
-//                }
-//                else if((REPEAT_FLAG == 0) && (owner.getId() != R.id.answer_layout)) {
-//
-//                }
 
                 vw.setVisibility(View.VISIBLE);//finally set Visibility to VISIBLE
                 // Returns true. DragEvent.getResult() will return true.
@@ -662,13 +660,25 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
                     this.getAnswerList();
 
-//                    Toast.makeText(getApplicationContext(), answerStrList.toString(), Toast.LENGTH_SHORT).show();
+                    answerStr = answerStrList.toString();
+                    jsonResult = formatter.format2JSON(answerStr, "drag", quesId + "").toString();
 
-                    Intent msgIntent = new Intent(this, MessageService.class);
-                    msgIntent.putExtra("answerStr", answerStrList.toString());
-                    msgIntent.putExtra("quesType", "drag");
-                    msgIntent.putExtra("quesId", quesId + "");
-                    startService(msgIntent);
+                    // new bluetooth transfer
+                    Intent intent = new Intent(this, BluetoothService.class);
+                    intent.putExtra("msg", jsonResult);
+                    startService(intent);
+//                    transferUtil.sendMsg(jsonResult);
+                    if(validator.checkMessage(jsonResult, "drag", quesId + "") == true){
+                        Toast.makeText(context, "回答正确", Toast.LENGTH_SHORT).show();
+                        if(isLoggedin) {
+                            UserManager.getInstance(context).updateScore();
+                            QuestionStatusManager.getInstance(context).updateStatus("drag", quesId);
+                        }
+                    }
+                    else {
+                        Toast.makeText(context, "回答不对哦", Toast.LENGTH_SHORT).show();
+                    }
+
                 }
                 else {
                     Toast.makeText(getApplicationContext(), "好像哪里不对", Toast.LENGTH_SHORT).show();
@@ -694,119 +704,6 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         for(int i = 1; i < answerNum - 1; i++) {
             answerStrList.add((String) ((Button) answerLayout.getChildAt(i)).getText());
         }
-    }
-
-
-
-    public class JSONReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            jsonResult = intent.getStringExtra("json");
-
-            System.out.println("JSONMessageReceiver received jsonResult: " + jsonResult);
-
-            Toast.makeText(getApplicationContext(), "JSONMessageReceiver received jsonResult: " + jsonResult, Toast.LENGTH_SHORT).show();
-
-//            this.sendBtMsg(jsonResult);
-
-            try {
-                btMsgUtil.sendMsg(jsonResult);
-            } catch(Exception e) {
-                Toast.makeText(DragModeQuestionActivity.this, "蓝牙不太对啊", Toast.LENGTH_SHORT).show();
-            }
-//            btMsgUtil.sendMsg(jsonResult);
-            if(checkAnswer(jsonResult) == true){
-                Toast.makeText(DragModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
-                if(isLoggedin) {
-                    UserManager.getInstance(context).updateScore();
-                }
-            }
-            else {
-                Toast.makeText(DragModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
-            }
-
-            Toast.makeText(getApplicationContext(), "after sendBtMsg", Toast.LENGTH_SHORT).show();
-
-        }
-
-//        public void sendBtMsg(String msg2send) {
-//
-//            try {
-////                mmSocket = mmDevice.createRfcommSocketToServiceRecord(uuid);
-//                try {
-//                    mmSocket = (BluetoothSocket) mmDevice.getClass().getMethod("createRfcommSocket", new Class[] {int.class}).invoke(mmDevice,1);
-//                } catch (IllegalAccessException e) {
-//                    e.printStackTrace();
-//                } catch (InvocationTargetException e) {
-//                    e.printStackTrace();
-//                } catch (NoSuchMethodException e) {
-//                    e.printStackTrace();
-//                }
-//
-//                Toast.makeText(getApplicationContext(), "getting mmSocket: " + mmSocket.toString(), Toast.LENGTH_SHORT).show();
-//                Toast.makeText(getApplicationContext(), "mmSocket CONNECTED??: " + mmSocket.isConnected(), Toast.LENGTH_SHORT).show();
-//
-//                if (!mmSocket.isConnected()) {
-//                    mmSocket.connect(); // this!!!
-//                    Toast.makeText(getApplicationContext(), "mmSocket.connect()", Toast.LENGTH_SHORT).show();
-//                }
-//
-//                String msg = msg2send;
-//                msg += "\n";
-//                OutputStream mmOutputStream = mmSocket.getOutputStream();
-//                mmOutputStream.write(msg.getBytes());
-//
-//                Toast.makeText(getApplicationContext(), "SENDING THE MSG", Toast.LENGTH_SHORT).show();
-//
-////                mmSocket.close();
-//
-//            } catch (IOException e) {
-////                 TODO Auto-generated catch block
-//                Toast.makeText(getApplicationContext(), "in catch EXCEPTION: " + e.toString(), Toast.LENGTH_SHORT).show();
-//                e.printStackTrace();
-//            }
-//
-//        }
-
-    }
-
-    private boolean checkAnswer(String answer) {
-        boolean result = false;
-        switch(quesId) {
-            case 1:
-                if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
-                    System.out.println("true");
-                    result = true;
-                } else {
-                    System.out.println("false");
-                    result = false;
-                }
-                break;
-            case 2:
-                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-            case 3:
-                if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}") || answer.equals("{\"10\":\"{\"4\":\"{\"1\":\"5\",\"3\":\"90\"}\"}\"}")
-                        || answer.equals("{\"10\":\"{\"4\":\"{\"2\":\"90\",\"1\":\"5\"}\"}\"}") || answer.equals("{\"10\":\"{\"4\":\"{\"3\":\"90\",\"1\":\"5\"}\"}\"}")) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-            case 4:
-                if (answer.equals("{\"0\":\"6\",\"10\":\"{\"5\":\"{\"5\":\"1\"}\"}\"}")) {
-                    result = true;
-                } else {
-                    result = false;
-                }
-                break;
-        }
-        return result;
     }
 
 }

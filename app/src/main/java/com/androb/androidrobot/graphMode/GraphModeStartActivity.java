@@ -45,8 +45,8 @@ public class GraphModeStartActivity extends AppCompatActivity implements View.On
         super.onStart();
 
         mContext = this.getApplicationContext();
-        dbHelper = new DBHelper(this.getApplicationContext());
         if(UserManager.getInstance(this).isLoggedIn()) {
+            dbHelper = new DBHelper(this.getApplicationContext());
 
             // Create Inner Thread Class
             Thread dbThread = new Thread(new Runnable() {

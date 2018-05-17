@@ -34,28 +34,31 @@ public class UserManager {
     private static final String KEY_PASSWORD = "password";
     private static final String KEY_SCORE = "score";
 
-    private static UserManager mInstance;
-    private static Context mCtx;
+    private static UserManager instance;
+    private static Context context;
 
     private String uname = "";
     private int oriScore = 0;
     private int newScore = 0;
 
+//    private DBHelper dbHelper;
+
     private UserManager(Context context) {
-        mCtx = context;
+        UserManager.context = context;
+//        dbHelper = new DBHelper(context);
     }
 
     public static synchronized UserManager getInstance(Context context) {
-        if (mInstance == null) {
-            mInstance = new UserManager(context);
+        if (instance == null) {
+            instance = new UserManager(context);
         }
-        return mInstance;
+        return instance;
     }
 
     //method to let the user login
     //this method will store the user data in shared preferences
     public void userLogin(User user) {
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.putString(KEY_USERNAME, user.getUsername());
         editor.putString(KEY_PASSWORD, user.getPassword());
@@ -65,13 +68,13 @@ public class UserManager {
 
     //this method will checker whether user is already logged in or not
     public boolean isLoggedIn() {
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return sharedPreferences.getString(KEY_USERNAME, null) != null;
     }
 
     //this method will give the logged in user
     public User getUser() {
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         return new User(
                 sharedPreferences.getString(KEY_USERNAME, null),
                 sharedPreferences.getString(KEY_SCORE, null)
@@ -80,17 +83,17 @@ public class UserManager {
 
     //this method will logout the user
     public void logout() {
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
         editor.clear();
         editor.apply();
-        mCtx.startActivity(new Intent(mCtx, StartActivity.class));
+        context.startActivity(new Intent(context, StartActivity.class));
     }
 
     public void updateScore() {
         Log.d(TAG, "UpdateScore");
 
-        SharedPreferences sharedPreferences = mCtx.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
+        SharedPreferences sharedPreferences = context.getSharedPreferences(SHARED_PREF_NAME, Context.MODE_PRIVATE);
 
         uname = this.getUser().getUsername();
         oriScore = Integer.valueOf(sharedPreferences.getString(KEY_SCORE, ""));
@@ -125,7 +128,7 @@ public class UserManager {
         // commit changes
         editor.commit();
 
-        VolleySingleton.getInstance(mCtx).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(context).addToRequestQueue(stringRequest);
         Log.d(TAG, "in UpdateScore: after VolleySingleton");
     }
 }

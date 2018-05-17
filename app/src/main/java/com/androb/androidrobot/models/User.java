@@ -20,6 +20,8 @@ public class User {
 
     HashSet<Question> answeredQuestions;
 
+    public User(){}
+
     public User(String uname, String sc) {
         System.out.println("in User, score: " + sc);
         this.username = uname;

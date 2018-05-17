@@ -61,7 +61,7 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.collegestumain_layout);
 
-        dbHelper = new DBHelper(this.getApplicationContext());
+//        dbHelper = new DBHelper(this.getApplicationContext());
 
         ButterKnife.bind(this);
 

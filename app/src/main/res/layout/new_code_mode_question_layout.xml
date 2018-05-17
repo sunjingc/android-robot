@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:padding="8dp"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <TextView
+        android:id="@+id/code_question_text"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp"
+        android:layout_marginTop="23dp"
+        android:text="题目here："
+        android:textSize="17sp" />
+
+    <TextView
+        android:id="@+id/code_prompt_text"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp"
+        android:layout_alignTop="@+id/code_question_text"
+        android:layout_marginTop="70dp"
+        android:text="方法名here："
+        android:textSize="17sp" />
+
+    <EditText
+        android:id="@+id/code_input_et"
+        android:layout_width="300dp"
+        android:layout_height="200dp"
+        android:layout_alignTop="@+id/code_prompt_text"
+        android:layout_marginTop="110dp"
+        android:layout_alignLeft="@+id/code_prompt_text"
+        android:layout_marginLeft="20dp"
+        android:layout_alignParentTop="true"
+        android:layout_alignStart="@+id/code_prompt_text"
+        android:background="@null"
+        android:gravity="top"
+        android:inputType="textMultiLine"
+        android:maxLines="20"
+        android:minLines="0"
+        android:scrollbars="vertical" />
+
+    <TextView
+        android:id="@+id/code_end_text"
+        android:layout_width="325dp"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginLeft="21dp"
+        android:layout_marginStart="21dp"
+        android:layout_alignTop="@+id/code_input_et"
+        android:layout_marginTop="320dp"
+        android:text="}"
+        android:textSize="17sp" />
+
+
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignTop="@+id/code_input_et"
+        android:gravity="center"
+        android:layout_marginTop="290dp"
+        android:id="@+id/linearLayout">
+
+        <Button
+            android:id="@+id/code_ques_submit_btn"
+            android:layout_width="150dp"
+            android:layout_height="50dp"
+            android:text="提交" />
+
+        <ImageButton
+            android:id="@+id/code_help_btn"
+            android:layout_width="45dp"
+            android:layout_height="45dp"
+            android:adjustViewBounds="false"
+            android:cropToPadding="false"
+            android:scaleType="centerInside"
+            android:src="@drawable/help_icon">
+        </ImageButton>
+    </LinearLayout>
+
+    <android.support.v7.widget.AppCompatButton
+        android:id="@+id/code_done"
+        android:layout_width="70dp"
+        android:layout_height="35dp"
+        android:layout_below="@+id/linearLayout"
+        android:layout_centerHorizontal="true"
+        android:layout_gravity="center_vertical"
+        android:layout_weight="1"
+        android:backgroundTint="@color/material_red_700"
+        android:clickable="false"
+        android:text="已完成"
+        android:textColor="@color/white"
+        android:textSize="10sp" />
+
+</RelativeLayout>

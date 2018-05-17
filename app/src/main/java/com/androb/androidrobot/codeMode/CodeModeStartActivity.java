@@ -55,8 +55,8 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
         System.out.println("college main: " + codeString);
 
 
-        dbHelper = new DBHelper(this.getApplicationContext());
         if(UserManager.getInstance(this).isLoggedIn()) {
+            dbHelper = new DBHelper(this.getApplicationContext());
 
             // Create Inner Thread Class
             Thread dbThread = new Thread(new Runnable() {
@@ -119,7 +119,8 @@ public class CodeModeStartActivity extends AppCompatActivity implements OnClickL
         setContentView(R.layout.code_mode_start_layout);
         ButterKnife.bind(this);
 
-        mIntent = new Intent(getApplicationContext(), CodeModeQuestionActivity.class);
+//        mIntent = new Intent(getApplicationContext(), CodeModeQuestionActivity.class);
+        mIntent = new Intent(getApplicationContext(), newCodeQuestionActivity.class);
 
         _codeQues1.setOnClickListener(this);
         _codeQues2.setOnClickListener(this);

@@ -31,7 +31,8 @@
             <!--</intent-filter>-->
         <!--</activity>-->
 
-        <activity android:name=".CollegeStuMainActivity" />
+        <activity android:name=".CollegeStuMainActivity"
+            android:screenOrientation="landscape"/>
 
         <activity android:name=".userManagement.RegisterActivity" />
         <activity android:name=".userManagement.LoginActivity" />
@@ -44,8 +45,10 @@
             android:screenOrientation="landscape"/>
 
 
-        <activity android:name=".codeMode.CodeModeQuestionActivity"
-            android:screenOrientation="landscape"/>
+        <!--<activity android:name=".codeMode.CodeModeQuestionActivity"-->
+            <!--android:screenOrientation="landscape"/>-->
+        <activity android:name=".codeMode.newCodeQuestionActivity"
+            android:screenOrientation="portrait"/>
 
         <activity android:name=".graphMode.GraphModeQuestionActivity"
             android:screenOrientation="landscape"/>
@@ -66,6 +69,7 @@
         <!--Services-->
         <!--<service android:name=".connectionUtil.BluetoothService" />-->
         <service android:name=".utils.messageUtil.MessageService" />
+        <service android:name=".utils.connectionUtil.BluetoothService" />
 
     </application>
 

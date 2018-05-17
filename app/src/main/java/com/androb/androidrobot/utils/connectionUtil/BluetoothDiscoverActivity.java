@@ -265,7 +265,6 @@ public class BluetoothDiscoverActivity extends Activity {
         }
     }
 
-
     public class ViewHolder {
         TextView name;
         RadioButton select;

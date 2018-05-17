@@ -1,10 +1,8 @@
 package com.androb.androidrobot.graphMode;
 
-import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Paint;
@@ -25,7 +23,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.utils.messageUtil.MessageService;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothService;
+import com.androb.androidrobot.utils.connectionUtil.TransferUtil;
+import com.androb.androidrobot.utils.messageUtil.MessageFormatter;
+import com.androb.androidrobot.utils.messageUtil.MessageValidator;
 import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
 import com.androb.androidrobot.utils.userUtil.UserManager;
 import com.androb.androidrobot.models.User;
@@ -99,14 +100,11 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     private AlertDialog.Builder builder;
 
     private String jsonResult;
-    private JSONReceiver receiver;
+//    private JSONReceiver receiver;
 
     private User curUser;
     private boolean isLoggedin;
 
-    private static String KEY_APICALL = "apicall";
-    private static String KEY_USERNAME = "username";
-    private static String KEY_QUESID = "quesId";
     private String username;
 
     // for drawing lines
@@ -115,22 +113,31 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     // for question record
     private boolean qStatus = false;
 
+    // check message and BT transfer
+    // JSON message
+    private MessageFormatter formatter = new MessageFormatter();
+    private MessageValidator validator = new MessageValidator();
+
+    private TransferUtil transferUtil = new TransferUtil();
+    private Context context;
+
 
     protected void onStart() {
         super.onStart();
 
+        graphDone.setVisibility(View.INVISIBLE);
         if(isLoggedin) {
             SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
             qStatus = (sharedPreferences.getString("graphString", null).indexOf(questionId + "") == -1);
-            if(qStatus) {
+            if(!qStatus) {
                 graphDone.setVisibility(View.INVISIBLE);
             }
         }
 
-        receiver = new JSONReceiver();
-        IntentFilter filter = new IntentFilter();
-        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-        registerReceiver(receiver, filter);
+//        receiver = new JSONReceiver();
+//        IntentFilter filter = new IntentFilter();
+//        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
+//        registerReceiver(receiver, filter);
 //        this.checkQuestionStatus();
 
         Log.d("GraphMode", "onStart");
@@ -138,7 +145,7 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
 
     protected void onDestroy() {
         super.onDestroy();
-        unregisterReceiver(receiver);
+//        unregisterReceiver(receiver);
 
         Log.d("GraphMode", "onDestroy");
     }
@@ -154,6 +161,8 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
 
         Intent intent = this.getIntent();
         questionId = Integer.parseInt(intent.getStringExtra("btn_id"));
+
+        context = this.getApplicationContext();
 
         submitButton.setOnClickListener(this);
         cancelButton.setOnClickListener(this);
@@ -559,11 +568,30 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
                         // answerStr
                         // quesType
                         // quesId
-                        Intent msgIntent = new Intent(this, MessageService.class);
-                        msgIntent.putExtra("answerStr", answerStr);
-                        msgIntent.putExtra("quesType", "graph");
-                        msgIntent.putExtra("quesId", questionId + "");
-                        startService(msgIntent);
+//                        Intent msgIntent = new Intent(this, MessageService.class);
+//                        msgIntent.putExtra("answerStr", answerStr);
+//                        msgIntent.putExtra("quesType", "graph");
+//                        msgIntent.putExtra("quesId", questionId + "");
+//                        startService(msgIntent);
+                        jsonResult = formatter.format2JSON(answerStr, "graph", questionId + "").toString();
+
+                        System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
+//                        transferUtil.sendMsg(jsonResult);
+
+                        // new bluetooth transfer
+                        Intent intent = new Intent(this, BluetoothService.class);
+                        intent.putExtra("msg", jsonResult);
+                        startService(intent);
+                        if(validator.checkMessage(jsonResult, "graph", questionId + "") == true){
+                            Toast.makeText(GraphModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+                            if(isLoggedin) {
+                                UserManager.getInstance(context).updateScore();
+                                QuestionStatusManager.getInstance(context).updateStatus("graph", questionId);
+                            }
+                        }
+                        else {
+                            Toast.makeText(GraphModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+                        }
                     }
                 }
                 else {
@@ -727,67 +755,69 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     }
 
 
-    public class JSONReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-
-            jsonResult = intent.getStringExtra("json");
-
-            System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
-
-
-            if(checkAnswer(jsonResult) == true){
-                Toast.makeText(GraphModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
-                if(isLoggedin) {
-                    UserManager.getInstance(context).updateScore();
-                    QuestionStatusManager.getInstance(context).updateStatus("graph", questionId);
-                }
-            }
-            else {
-                Toast.makeText(GraphModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
-            }
-        }
-
-        private boolean checkAnswer(String answer) {
-            boolean result = false;
-            switch(questionId) {
-                case 1:
-                    System.out.println("in case 1: " + answer + "   real ans: " + R.string.g_ans_1);
-                    if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
-                        System.out.println("true");
-                        result = true;
-                    } else {
-                        System.out.println("false");
-                        result = false;
-                    }
-                    break;
-                case 2:
-                    if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                    break;
-                case 3:
-                    if (answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"2\":\"90\"}}}") || answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"3\":\"90\"}}}")
-                            || answer.equals("{\"10\":{\"4\":{\"2\":\"90\",\"1\":\"5\"}}}") || answer.equals("{\"10\":{\"4\":{\"3\":\"90\",\"1\":\"5\"}}}")) {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                    break;
-                case 4:
-                    if (answer.equals("{}") || answer.equals("{\"1\":\"10\"}")) {
-                        result = true;
-                    } else {
-                        result = false;
-                    }
-                    break;
-            }
-            return result;
-        }
-
-    }
+//    public class JSONReceiver extends BroadcastReceiver {
+//        @Override
+//        public void onReceive(Context context, Intent intent) {
+//
+////            jsonResult = intent.getStringExtra("json");
+//            jsonResult = formatter.format2JSON();
+//
+//            System.out.println("in GraphMode, JSONReceiver received jsonResult: " + jsonResult);
+//
+//
+////            if(checkAnswer(jsonResult) == true){
+//            if(validator.checkMessage(jsonResult) == true){
+//                Toast.makeText(GraphModeQuestionActivity.this, "回答正确", Toast.LENGTH_SHORT).show();
+//                if(isLoggedin) {
+//                    UserManager.getInstance(context).updateScore();
+//                    QuestionStatusManager.getInstance(context).updateStatus("graph", questionId);
+//                }
+//            }
+//            else {
+//                Toast.makeText(GraphModeQuestionActivity.this, "回答不对哦", Toast.LENGTH_SHORT).show();
+//            }
+//        }
+//
+//        private boolean checkAnswer(String answer) {
+//            boolean result = false;
+//            switch(questionId) {
+//                case 1:
+//                    System.out.println("in case 1: " + answer + "   real ans: " + R.string.g_ans_1);
+//                    if (answer.equals("{\"1\":\"4\",\"2\":\"90\",\"0\":\"3\"}")) {
+//                        System.out.println("true");
+//                        result = true;
+//                    } else {
+//                        System.out.println("false");
+//                        result = false;
+//                    }
+//                    break;
+//                case 2:
+//                    if (answer.equals("{\"1\":\"2\",\"4\":\"3\",\"5\":\"1\"}")) {
+//                        result = true;
+//                    } else {
+//                        result = false;
+//                    }
+//                    break;
+//                case 3:
+//                    if (answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"2\":\"90\"}}}") || answer.equals("{\"10\":{\"4\":{\"1\":\"5\",\"3\":\"90\"}}}")
+//                            || answer.equals("{\"10\":{\"4\":{\"2\":\"90\",\"1\":\"5\"}}}") || answer.equals("{\"10\":{\"4\":{\"3\":\"90\",\"1\":\"5\"}}}")) {
+//                        result = true;
+//                    } else {
+//                        result = false;
+//                    }
+//                    break;
+//                case 4:
+//                    if (answer.equals("{}") || answer.equals("{\"1\":\"10\"}")) {
+//                        result = true;
+//                    } else {
+//                        result = false;
+//                    }
+//                    break;
+//            }
+//            return result;
+//        }
+//
+//    }
 
 
     private boolean checkInput() {
@@ -805,7 +835,7 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
                 case R.id.graph_order_blank_2:
                 case R.id.graph_order_blank_3:
                     System.out.println("checkInput, in order blanks");
-                    regex = "car.[forward|backward|sing|pause|left|right]*\\([0-9]*\\)";
+                    regex = "car.forward\\([0-9]*\\)|car.backward\\([0-9]*\\)|car.right\\([0-9]*\\)|car.left\\([0-9]*\\)|car.pause\\([0-9]*\\)|car.sing\\([0-9]*\\)";
                     pattern = Pattern.compile(regex);
                     matcher = pattern.matcher(et.getText().toString().toLowerCase());
                     isValid = matcher.matches();
@@ -816,8 +846,17 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
                     regex = "if time < [0-9]+";
                     regex2 = "if\\(today == [1-7]\\)";
                     pattern = Pattern.compile(regex);
+                    Pattern pattern2 = Pattern.compile(regex2);
                     matcher = pattern.matcher(et.getText().toString().toLowerCase());
-                    isValid = matcher.matches();
+                    Matcher matcher2 = pattern2.matcher(et.getText().toString().toLowerCase());
+
+                    if(matcher.matches() || matcher2.matches()){
+                        isValid = true;
+                    }
+                    else {
+                        isValid = false;
+                    }
+//                    isValid = matcher.matches();
                     break;
 
             }

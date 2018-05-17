@@ -24,8 +24,9 @@ import java.util.Map;
 
 public class DBHelper {
 
-    private static Context mCtx;
+    private static Context mContext;
     private String username;
+    private String password;
     private String type;
     private User user;
 
@@ -33,15 +34,14 @@ public class DBHelper {
 
 
     public DBHelper(Context context) {
-        mCtx = context;
-        SharedPreferences sp = mCtx.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+        mContext = context;
+        SharedPreferences sp = mContext.getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
         username = sp.getString("username", null);
-        user = UserManager.getInstance(mCtx).getUser();
+        user = UserManager.getInstance(mContext).getUser();
     }
 
 
     public String checkQuestionStatus(String mtype, final VolleyCallback callback) {
-
         this.type = mtype;
 
         StringRequest stringRequest = new StringRequest(Request.Method.POST, URLs.ROOT_URL,
@@ -83,7 +83,7 @@ public class DBHelper {
             }
         };
 
-        VolleySingleton.getInstance(mCtx).addToRequestQueue(stringRequest);
+        VolleySingleton.getInstance(mContext).addToRequestQueue(stringRequest);
 
         System.out.println("in dbHelper, before return: " + idResult);
         return idResult;

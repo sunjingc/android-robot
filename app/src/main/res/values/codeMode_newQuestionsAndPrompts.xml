@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="c_newques_1">让小车前进4米，右转45°，再后退3米 </string>
+    <string name="c_prompt_1">public static void carAction1(){</string>
+
+    <string name="c_newques_2">让小车前进2米，暂停3秒之后，唱一首歌 </string>
+    <string name="c_prompt_2">public static void carAction2(){</string>
+
+    <string name="c_newques_3">让小车重复5次：前进2米，暂停3秒 </string>
+    <string name="c_prompt_3">public static void carAction3(){</string>
+
+    <string name="c_newques_4">让小车先唱一遍歌，再画出一个边长为3米正方形 </string>
+    <string name="c_prompt_4">public static void carAction4(){</string>
+</resources>

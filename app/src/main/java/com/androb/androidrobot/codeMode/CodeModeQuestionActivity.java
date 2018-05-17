@@ -19,7 +19,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.androb.androidrobot.R;
-import com.androb.androidrobot.utils.connectionUtil.NewTransferUtil;
+import com.androb.androidrobot.utils.connectionUtil.BluetoothService;
+import com.androb.androidrobot.utils.connectionUtil.TransferUtil;
 import com.androb.androidrobot.utils.messageUtil.MessageFormatter;
 import com.androb.androidrobot.utils.messageUtil.MessageValidator;
 import com.androb.androidrobot.utils.questionUtil.QuestionStatusManager;
@@ -73,7 +74,7 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
     private MessageFormatter formatter = new MessageFormatter();
     private MessageValidator validator = new MessageValidator();
 
-    private NewTransferUtil transferUtil = new NewTransferUtil();
+    private TransferUtil transferUtil = new TransferUtil();
 
     // 处理输入格式
 //    private MessageService msgService;
@@ -137,11 +138,12 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
 
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
+        codeDone.setVisibility(View.INVISIBLE);
         if(isLoggedin) {
             SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
             qStatus = (sharedPreferences.getString("codeString", null).indexOf(questionId + "") == -1);
-            if(qStatus) {
-                codeDone.setVisibility(View.INVISIBLE);
+            if(!qStatus) {
+                codeDone.setVisibility(View.VISIBLE);
             }
         }
 
@@ -180,7 +182,11 @@ public class CodeModeQuestionActivity extends AppCompatActivity implements View.
                     System.out.println("in codeQues: " + jsonResult);
 
                     // TODO: 5/15 新的传输test，用socketSingleton
-                    transferUtil.sendMsg(jsonResult);
+//                    transferUtil.sendMsg(jsonResult);
+                    // TODO: 5/16 新的BT test，用service
+                    Intent intent = new Intent(this, BluetoothService.class);
+                    intent.putExtra("msg", jsonResult);
+                    startService(intent);
 
                     if(validator.checkMessage(jsonResult, quesType, questionId + "")) {
                         Toast.makeText(getApplicationContext(), "回答正确", Toast.LENGTH_SHORT).show();

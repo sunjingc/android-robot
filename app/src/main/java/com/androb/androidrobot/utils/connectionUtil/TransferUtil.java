@@ -9,15 +9,17 @@ import java.io.OutputStream;
  * Created by kaki on 2018/05/14.
  */
 
-public class NewTransferUtil {
+public class TransferUtil {
+
+    private BluetoothSocket socket;
 
     public void sendMsg(String msg) {
-
-        BluetoothSocket socket = BluetoothSocketSingleton.getInstance();
+//        BluetoothSocket socket = socket = BluetoothSocketSingleton.getInstance();
+        socket = BluetoothSocketSingleton.getInstance();
 
         if (!socket.isConnected()) {
             try {
-                socket.connect(); // this!!!
+                socket.connect();
             } catch (IOException e) {
                 e.printStackTrace();
             }
@@ -28,7 +30,7 @@ public class NewTransferUtil {
             OutputStream mmOutputStream = socket.getOutputStream();
 
             mmOutputStream.write(msg.getBytes());
-            socket.close();
+//            socket.close();
 
         } catch (IOException e) {
             e.printStackTrace();
