@@ -45,6 +45,14 @@
             android:screenOrientation="landscape"/>
 
 
+        <activity android:name=".graphMode.GraphModeStartNewActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".dragMode.DragModeStartNewActivity"
+            android:screenOrientation="landscape"/>
+        <activity android:name=".codeMode.CodeModeStartNewActivity"
+            android:screenOrientation="landscape"/>
+
+
         <!--<activity android:name=".codeMode.CodeModeQuestionActivity"-->
             <!--android:screenOrientation="landscape"/>-->
         <activity android:name=".codeMode.newCodeQuestionActivity"

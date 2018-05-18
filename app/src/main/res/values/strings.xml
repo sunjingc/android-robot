@@ -12,6 +12,21 @@
     <string name="bluetooth_setting">蓝牙设置</string>
     <string name="view_profile">我的账号</string>
 
+    <string name="graph_1">流程图 - Q1</string>
+    <string name="graph_2">流程图 - Q2</string>
+    <string name="graph_3">流程图 - Q3</string>
+    <string name="graph_4">流程图 - Q4</string>
+
+    <string name="drag_1">拖拽 - Q1</string>
+    <string name="drag_2">拖拽 - Q2</string>
+    <string name="drag_3">拖拽 - Q3</string>
+    <string name="drag_4">拖拽 - Q4</string>
+
+    <string name="code_1">编程 - Q1</string>
+    <string name="code_2">编程 - Q2</string>
+    <string name="code_3">编程 - Q3</string>
+    <string name="code_4">编程 - Q4</string>
+
     <string name="drag_help_msg">前进：Car.forward(距离/米)\n后退：Car.backward(距离/米)\n
                             旋转：Car.rotate(方向：right/left, 角度/deg)\n
                             暂停：Car.pause(时间/秒)\n

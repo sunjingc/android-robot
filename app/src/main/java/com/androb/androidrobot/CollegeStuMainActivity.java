@@ -10,6 +10,9 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
 
+import com.androb.androidrobot.codeMode.CodeModeStartNewActivity;
+import com.androb.androidrobot.dragMode.DragModeStartNewActivity;
+import com.androb.androidrobot.graphMode.GraphModeStartNewActivity;
 import com.androb.androidrobot.utils.connectionUtil.BluetoothDiscoverActivity;
 
 
@@ -48,7 +51,7 @@ public class CollegeStuMainActivity extends AppCompatActivity {
     private User curUser;
     private DBHelper dbHelper;
 
-    private String codeString = "";
+    private boolean isLoggedIn;
 
 
     protected void onStart() {
@@ -62,13 +65,15 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         setContentView(R.layout.collegestumain_layout);
 
 //        dbHelper = new DBHelper(this.getApplicationContext());
+        isLoggedIn = UserManager.getInstance(this).isLoggedIn();
 
         ButterKnife.bind(this);
 
         _dragModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), DragModeStartActivity.class);
+                Intent intent = new Intent(getApplicationContext(), DragModeStartNewActivity.class);
 //                Intent intent = new Intent(getApplicationContext(), DragTestActivity.class);
                 startActivity(intent);
             }
@@ -76,14 +81,16 @@ public class CollegeStuMainActivity extends AppCompatActivity {
         _graphModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), GraphModeStartActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), GraphModeStartActivity.class);
+                Intent intent = new Intent(getApplicationContext(), GraphModeStartNewActivity.class);
                 startActivity(intent);
             }
         });
         _codeModeButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(getApplicationContext(), CodeModeStartActivity.class);
+//                Intent intent = new Intent(getApplicationContext(), CodeModeStartActivity.class);
+                Intent intent = new Intent(getApplicationContext(), CodeModeStartNewActivity.class);
                 startActivity(intent);
             }
         });
@@ -124,9 +131,15 @@ public class CollegeStuMainActivity extends AppCompatActivity {
             _profileLink.setVisibility(View.VISIBLE);
             _loginLink.setVisibility(View.INVISIBLE);
         }
+    }
 
-
-
+    @Override
+    public void onBackPressed() {
+        if(isLoggedIn) {
+            UserManager.getInstance(this.getApplicationContext()).logout();
+            System.exit(0);
+            super.onBackPressed();
+        }
     }
 
 }

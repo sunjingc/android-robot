@@ -124,11 +124,11 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
 
 
     protected void onStart() {
-        qStatus = QuestionStatusManager.getInstance(DragModeQuestionActivity.this).checkQuestionStatus("drag", quesId);
-
-        if(qStatus) {
-            Toast.makeText(DragModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
-        }
+//        qStatus = QuestionStatusManager.getInstance(DragModeQuestionActivity.this).checkQuestionStatus("drag", quesId);
+//
+//        if(qStatus) {
+//            Toast.makeText(DragModeQuestionActivity.this, "你已经做过这道题目了~", Toast.LENGTH_SHORT).show();
+//        }
         super.onStart();
     }
 
@@ -156,13 +156,13 @@ public class DragModeQuestionActivity extends AppCompatActivity implements View.
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
         dragDone.setVisibility(View.INVISIBLE);
-        if(isLoggedin) {
-            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
-            qStatus = (sharedPreferences.getString("dragString", null).indexOf(quesId + "") == -1);
-            if(!qStatus) {
-                dragDone.setVisibility(View.VISIBLE);
-            }
-        }
+//        if(isLoggedin) {
+//            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+//            qStatus = (sharedPreferences.getString("dragString", null).indexOf(quesId + "") == -1);
+//            if(!qStatus) {
+//                dragDone.setVisibility(View.VISIBLE);
+//            }
+//        }
 
 //        btSocket = btSingleton.getInstance();
 

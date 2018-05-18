@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:orientation="vertical">
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp">
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/drag_1"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:text="@string/drag_1" />
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/drag_2"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/drag_2"/>
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/drag_3"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/drag_3"/>
+
+        <Button
+            style="@style/Widget.AppCompat.Button.Colored"
+            android:id="@+id/drag_4"
+            android:layout_width="350dp"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dp"
+            android:text="@string/drag_4"/>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:layout_marginLeft="470dp"
+        android:layout_marginTop="-208dp">
+
+        <ImageView
+            android:id="@+id/drag_stat_1"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:src="@drawable/check" />
+
+        <ImageView
+            android:id="@+id/drag_stat_2"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="7dp"
+            android:src="@drawable/check" />
+
+        <ImageView
+            android:id="@+id/drag_stat_3"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="6dp"
+            android:src="@drawable/check" />
+
+        <ImageView
+            android:id="@+id/drag_stat_4"
+            android:layout_width="48dp"
+            android:layout_height="48dp"
+            android:layout_marginTop="5dp"
+            android:src="@drawable/check" />
+
+    </LinearLayout>
+
+</LinearLayout>

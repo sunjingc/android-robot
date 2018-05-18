@@ -125,21 +125,14 @@ public class GraphModeQuestionActivity extends AppCompatActivity implements View
     protected void onStart() {
         super.onStart();
 
-        graphDone.setVisibility(View.INVISIBLE);
-        if(isLoggedin) {
-            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
-            qStatus = (sharedPreferences.getString("graphString", null).indexOf(questionId + "") == -1);
-            if(!qStatus) {
-                graphDone.setVisibility(View.INVISIBLE);
-            }
-        }
-
-//        receiver = new JSONReceiver();
-//        IntentFilter filter = new IntentFilter();
-//        filter.addAction("com.androb.androidrobot.messageUtil.MessageService");
-//        registerReceiver(receiver, filter);
-//        this.checkQuestionStatus();
-
+//        graphDone.setVisibility(View.INVISIBLE);
+//        if(isLoggedin) {
+//            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+//            qStatus = (sharedPreferences.getString("graphString", null).indexOf(questionId + "") == -1);
+//            if (!qStatus) {
+//                graphDone.setVisibility(View.INVISIBLE);
+//            }
+//        }
         Log.d("GraphMode", "onStart");
     }
 

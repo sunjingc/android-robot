@@ -103,13 +103,13 @@ public class newCodeQuestionActivity extends Activity implements View.OnClickLis
         isLoggedin = UserManager.getInstance(this).isLoggedIn();
 
         codeDone.setVisibility(View.INVISIBLE);
-        if(isLoggedin) {
-            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
-            qStatus = (sharedPreferences.getString("codeString", null).indexOf(questionId + "") == -1);
-            if(!qStatus) {
-                codeDone.setVisibility(View.VISIBLE);
-            }
-        }
+//        if(isLoggedin) {
+//            SharedPreferences sharedPreferences = this.getApplication().getSharedPreferences("sharedUserPref", Context.MODE_PRIVATE);
+//            qStatus = (sharedPreferences.getString("codeString", null).indexOf(questionId + "") == -1);
+//            if(!qStatus) {
+//                codeDone.setVisibility(View.VISIBLE);
+//            }
+//        }
     }
 
     @Override
