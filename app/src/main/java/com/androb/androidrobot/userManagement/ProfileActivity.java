@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,12 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
     TextView levelText;
     @BindView(R.id.profile_logout_btn)
     Button logoutBtn;
+    @BindView(R.id.star_1)
+    ImageView star1;
+    @BindView(R.id.star_2)
+    ImageView star2;
+    @BindView(R.id.star_3)
+    ImageView star3;
 
     private User user;
 
@@ -38,6 +45,10 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
         super.onCreate(savedInstanceState);
         setContentView(R.layout.profile_layout);
         ButterKnife.bind(this);
+
+        star1.setVisibility(View.INVISIBLE);
+        star2.setVisibility(View.INVISIBLE);
+        star3.setVisibility(View.INVISIBLE);
 
         user = UserManager.getInstance(this).getUser();
 
@@ -49,12 +60,18 @@ public class ProfileActivity extends AppCompatActivity implements View.OnClickLi
 
         if(score > 100) {
             levelText.setText("Level 3");
+            star1.setVisibility(View.VISIBLE);
+            star2.setVisibility(View.VISIBLE);
+            star3.setVisibility(View.VISIBLE);
         }
         else if(score > 50 && score <= 100) {
             levelText.setText("Level 2");
+            star1.setVisibility(View.VISIBLE);
+            star2.setVisibility(View.VISIBLE);
         }
         else if(score >= 0 && score <= 50) {
             levelText.setText("Level 1");
+            star2.setVisibility(View.VISIBLE);
         }
 
         logoutBtn.setOnClickListener(this);

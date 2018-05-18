@@ -10,31 +10,69 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:text="Your Profile"
-        android:textSize="30sp"/>
-
-    <TextView
-        android:id="@+id/profile_name_text"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
         android:textSize="20sp"/>
 
-    <TextView
-        android:id="@+id/profile_score_text"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        android:orientation="vertical"
+        android:layout_marginTop="10dp"
+        android:layout_gravity="center">
 
-    <TextView
-        android:id="@+id/profile_level_text"
-        android:layout_gravity="center"
-        android:layout_marginTop="10dp"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:textSize="20sp"/>
+        <TextView
+            android:id="@+id/profile_name_text"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="NAME"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/profile_score_text"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="SCORE"
+            android:textSize="18sp"/>
+
+        <TextView
+            android:id="@+id/profile_level_text"
+            android:layout_gravity="center"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="LEVEL"
+            android:textSize="18sp"/>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="10dp">
+
+            <ImageView
+                android:id="@+id/star_1"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/star"/>
+
+            <ImageView
+                android:id="@+id/star_2"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/star"/>
+
+            <ImageView
+                android:id="@+id/star_3"
+                android:layout_width="30dp"
+                android:layout_height="30dp"
+                android:src="@drawable/star"/>
+
+        </LinearLayout>
+
+    </LinearLayout>
 
     <android.support.v7.widget.AppCompatButton
         android:id="@+id/profile_logout_btn"
